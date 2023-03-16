@@ -1,18 +1,25 @@
 import sqlite3
+import Statements
 
-# Connecting to database
+### Connecting to database #################
 connection = sqlite3.connect("./Tog-db.db")
-# Setting up DB cursor
 cursor = connection.cursor()
+############################################
 
-# Wagon types
+### Wagon types
 coupeWagon = ("SJ-sovevogn-1", 4)
 seatedWagon = ("SJ-sittevogn-1", 4, 3)
 
-cursor.execute("INSERT INTO Sovevogntype VALUES(?, ?)", coupeWagon)
-cursor.execute("INSERT INTO Sittevogntype VALUES(?,?,?)", seatedWagon)
+try: 
+    cursor.execute(Statements.sovevogntype, coupeWagon)
+except Exception:
+    print("Sovevogn allerede lagt inn.")
+try:
+    cursor.execute(Statements.sittevogntype, seatedWagon)
+except Exception:
+    print("Sittevogn allerede lagt inn.")
 
-# Train stations
+### Train stations
 trainStations = [
     ("Bodø", 4.1),
     ("Fauske", 34),
@@ -22,19 +29,31 @@ trainStations = [
     ("Trondheim S", 5.1)
 ]
 try:
-    cursor.executemany("INSERT INTO Jernbanestasjon VALUES(?, ?)", trainStations)
+    cursor.executemany(Statements.jernbanestasjon, trainStations)
 except Exception:
     print("Already added stations")
 
-# Operator
+### Operator
 try:
-    cursor.execute("INSERT INTO Operatør VALUES('SJ')")
+    cursor.execute(Statements.operatør)
 except Exception:
     print("Operator already added")
 
-# Train-rides
+### Partial rides
+connections = [
+    ("enkel", 60, "Bodø", "Fauske"),
+    ("enkel", 170, "Fauske", "Mo i Rana"),
+    ("enkel", 90, "Mo i Rana", "Mosjøen"),
+    ("enkel", 280, "Mosjøen", "Steinkjer"),
+    ("dobbel", 120, "Steinkjer", "Trondheim")
+]
+#try:
+cursor.executemany(Statements.delstrekning, connections)
+#except Exception:
+ #   print("Error inserting into Delstrekning")
 
 
-# Adding changes
+### Adding changes ###
 connection.commit()
 connection.close()
+######################

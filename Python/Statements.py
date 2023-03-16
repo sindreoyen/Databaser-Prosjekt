@@ -1,0 +1,7 @@
+### PREPARED STATEMENTS ### 
+sovevogntype = "INSERT INTO Sovevogntype VALUES(?, ?)"
+sittevogntype = "INSERT INTO Sittevogntype VALUES(?,?,?)"
+
+jernbanestasjon = "INSERT INTO Jernbanestasjon VALUES(?, ?)"
+operatør = "INSERT INTO Operatør VALUES('SJ')"
+delstrekning = "INSERT INTO Delstrekning VALUES(?,?,?,?)"
