@@ -6,6 +6,7 @@ connection = sqlite3.connect("./Tog-db.db")
 cursor = connection.cursor()
 ############################################
 
+
 ### Wagon types
 coupeWagon = ("SJ-sovevogn-1", 4)
 seatedWagon = ("SJ-sittevogn-1", 4, 3)
@@ -39,18 +40,50 @@ try:
 except Exception:
     print("Operator already added")
 
-### Partial rides
-connections = [
-    ("enkel", 60, "Bodø", "Fauske"),
-    ("enkel", 170, "Fauske", "Mo i Rana"),
-    ("enkel", 90, "Mo i Rana", "Mosjøen"),
-    ("enkel", 280, "Mosjøen", "Steinkjer"),
-    ("dobbel", 120, "Steinkjer", "Trondheim")
-]
-#try:
-cursor.executemany(Statements.delstrekning, connections)
-#except Exception:
- #   print("Error inserting into Delstrekning")
+### Delstrekninger
+# Checking if already added
+addedCount = 0
+for row in cursor.execute("SELECT delstrekningID FROM Delstrekning"):
+    addedCount += 1
+
+if addedCount == 0:
+    connections = [
+    (None, "enkelt", 60, "Bodø", "Fauske"),
+    (None, "enkelt", 170, "Fauske", "Mo i Rana"),
+    (None, "enkelt", 90, "Mo i Rana", "Mosjøen"),
+    (None, "enkelt", 280, "Mosjøen", "Steinkjer"),
+    (None, "dobbelt", 120, "Steinkjer", "Trondheim")
+    ]
+    try:
+        cursor.executemany(Statements.delstrekning, connections)
+    except Exception:
+        print("Error on INSERT Delstrekning")
+else: 
+    print("Delstrekninger allerede lagt inn")
+
+### Banestrekninger
+addedCount = 0
+for row in  cursor.execute("SELECT strekningID FROM Banestrekning"):
+    addedCount += 1
+if addedCount == 0:
+    routes = [
+        (None, "dagtog", "diesel", "Trondheim S", "Bodø"),
+        (None, "nattog", "diesel", "Trondheim S", "Bodø"),
+        (None, "morgentog", "diesel", "Mo i Rana", "Trondheim S"),
+    ]
+    try:
+        cursor.executemany(Statements.banestrekning, routes)
+    except Exception:
+        print("Error on INSERT Banestrekning")
+else:
+    print("Banestrekninger allerede lagt inn")
+
+# Connecting to Delstrekning
+for row in cursor.execute("SELECT strekningID, startstasjonNavn, sluttstasjonNavn FROM Banestrekning"):
+    id = row[0]
+    start, end = row[1], row[2]
+    # Connect delstrekning
+
 
 
 ### Adding changes ###
