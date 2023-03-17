@@ -52,7 +52,7 @@ if addedCount == 0:
     (None, "enkelt", 170, "Fauske", "Mo i Rana"), #2
     (None, "enkelt", 90, "Mo i Rana", "Mosjøen"), #3
     (None, "enkelt", 280, "Mosjøen", "Steinkjer"), #4
-    (None, "dobbelt", 120, "Steinkjer", "Trondheim") #5
+    (None, "dobbelt", 120, "Steinkjer", "Trondheim S") #5
     ]
     try:
         cursor.executemany(Statements.delstrekning, connections)
@@ -67,9 +67,8 @@ for row in  cursor.execute("SELECT strekningID FROM Banestrekning"):
     addedCount += 1
 if addedCount == 0:
     routes = [
-        (None, "dagtog", "diesel", "Trondheim S", "Bodø"), #1
-        (None, "nattog", "diesel", "Trondheim S", "Bodø"), #2
-        (None, "morgentog", "diesel", "Mo i Rana", "Trondheim S"), #3
+        (None, "Nordlandsbanen", "diesel", "Trondheim S", "Bodø"), #1
+        (None, "MO-TRD", "diesel", "Mo i Rana", "Trondheim S"), #2
     ]
     try:
         cursor.executemany(Statements.banestrekning, routes)
@@ -80,6 +79,19 @@ else:
 
 
 ### HarDelstrekning
+strekningData = [(1,1), (1,2), (1,3), (1,4), (1,5),
+                 (2,3), (2,4), (2,5)]
+try:
+    cursor.executemany(Statements.harDelstrekning, strekningData)
+except Exception:
+    print("HarDelstrekning allerede lagt in")
+
+
+#def lagVogn(operatør, erSovevogn):
+    #try:
+      #  cursor.execute("INSERT INTO Vogn")
+
+
 
 
 
