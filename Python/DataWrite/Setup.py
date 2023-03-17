@@ -2,12 +2,12 @@ import sqlite3
 import Statements
 
 ### Connecting to database #################
-connection = sqlite3.connect("./Tog-db.db")
+connection = sqlite3.connect("Tog-db.db")
 cursor = connection.cursor()
 ############################################
 
 
-### Wagon types
+### Sovevogntype & Sittevogntype
 coupeWagon = ("SJ-sovevogn-1", 4)
 seatedWagon = ("SJ-sittevogn-1", 4, 3)
 
@@ -20,7 +20,7 @@ try:
 except Exception:
     print("Sittevogn allerede lagt inn.")
 
-### Train stations
+### Jernbanestasjon
 trainStations = [
     ("Bodø", 4.1),
     ("Fauske", 34),
@@ -34,13 +34,13 @@ try:
 except Exception:
     print("Already added stations")
 
-### Operator
+### Operatør
 try:
     cursor.execute(Statements.operatør)
 except Exception:
     print("Operator already added")
 
-### Delstrekninger
+### Delstrekning
 # Checking if already added
 addedCount = 0
 for row in cursor.execute("SELECT delstrekningID FROM Delstrekning"):
@@ -48,11 +48,11 @@ for row in cursor.execute("SELECT delstrekningID FROM Delstrekning"):
 
 if addedCount == 0:
     connections = [
-    (None, "enkelt", 60, "Bodø", "Fauske"),
-    (None, "enkelt", 170, "Fauske", "Mo i Rana"),
-    (None, "enkelt", 90, "Mo i Rana", "Mosjøen"),
-    (None, "enkelt", 280, "Mosjøen", "Steinkjer"),
-    (None, "dobbelt", 120, "Steinkjer", "Trondheim")
+    (None, "enkelt", 60, "Bodø", "Fauske"), #1
+    (None, "enkelt", 170, "Fauske", "Mo i Rana"), #2
+    (None, "enkelt", 90, "Mo i Rana", "Mosjøen"), #3
+    (None, "enkelt", 280, "Mosjøen", "Steinkjer"), #4
+    (None, "dobbelt", 120, "Steinkjer", "Trondheim") #5
     ]
     try:
         cursor.executemany(Statements.delstrekning, connections)
@@ -61,15 +61,15 @@ if addedCount == 0:
 else: 
     print("Delstrekninger allerede lagt inn")
 
-### Banestrekninger
+### Banestrekning
 addedCount = 0
 for row in  cursor.execute("SELECT strekningID FROM Banestrekning"):
     addedCount += 1
 if addedCount == 0:
     routes = [
-        (None, "dagtog", "diesel", "Trondheim S", "Bodø"),
-        (None, "nattog", "diesel", "Trondheim S", "Bodø"),
-        (None, "morgentog", "diesel", "Mo i Rana", "Trondheim S"),
+        (None, "dagtog", "diesel", "Trondheim S", "Bodø"), #1
+        (None, "nattog", "diesel", "Trondheim S", "Bodø"), #2
+        (None, "morgentog", "diesel", "Mo i Rana", "Trondheim S"), #3
     ]
     try:
         cursor.executemany(Statements.banestrekning, routes)
@@ -78,11 +78,9 @@ if addedCount == 0:
 else:
     print("Banestrekninger allerede lagt inn")
 
-# Connecting to Delstrekning
-for row in cursor.execute("SELECT strekningID, startstasjonNavn, sluttstasjonNavn FROM Banestrekning"):
-    id = row[0]
-    start, end = row[1], row[2]
-    # Connect delstrekning
+
+### HarDelstrekning
+
 
 
 
