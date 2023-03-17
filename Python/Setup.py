@@ -9,8 +9,11 @@ cursor = connection.cursor()
 coupeWagon = ("SJ-sovevogn-1", 4)
 seatedWagon = ("SJ-sittevogn-1", 4, 3)
 
-cursor.execute("INSERT INTO Sovevogntype VALUES(?, ?)", coupeWagon)
-cursor.execute("INSERT INTO Sittevogntype VALUES(?,?,?)", seatedWagon)
+try:
+    cursor.execute("INSERT INTO Sovevogntype VALUES(?, ?)", coupeWagon)
+    cursor.execute("INSERT INTO Sittevogntype VALUES(?,?,?)", seatedWagon)
+except Exception:
+    print("Wagon already added")
 
 # Train stations
 trainStations = [
@@ -33,6 +36,13 @@ except Exception:
     print("Operator already added")
 
 # Train-rides
+
+# Train-track
+trainTracks = (1, "Nordlandsbanen", "diesel", "Trondheim S", "Bodø")
+try:
+    cursor.execute("INSERT INTO Banestrekning VALUES(?, ?, ?, ?, ?)", trainTracks)
+except Exception:
+    print("Train track already added")
 
 
 # Adding changes
