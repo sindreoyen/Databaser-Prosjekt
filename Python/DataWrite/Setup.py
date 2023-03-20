@@ -43,8 +43,8 @@ except Exception:
 ### Delstrekning
 # Checking if already added
 addedCount = 0
-for row in cursor.execute("SELECT delstrekningID FROM Delstrekning"):
-    addedCount += 1
+# for row in cursor.execute("SELECT delstrekningID FROM Delstrekning"):
+#     addedCount += 1
 
 if addedCount == 0:
     connections = [
