@@ -94,8 +94,6 @@ except Exception:
 
 
 
-
-
 ### Adding changes ###
 connection.commit()
 connection.close()
