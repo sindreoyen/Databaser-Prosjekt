@@ -13,10 +13,8 @@ NATURAL JOIN Banestrekning
 WHERE Banestrekning.navn = 'Nordlandsbanen'"""):
     print(cursor.fetchall())
     stationList.append(cursor.fetchone())
-    print(stationList)
 
-
-
+print(stationList)
 
 
 ### Adding changes ###
