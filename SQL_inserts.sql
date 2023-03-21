@@ -8,7 +8,7 @@ INSERT INTO "main"."Jernbanestasjon" ("navn", "moh") VALUES ('Trondheim S', '5.1
 
 INSERT INTO "main"."Operatør" ("operatørNavn") VALUES ('SJ');
 
-INSERT INTO "main"."Banestrekning" ("strekningID", "navn", "fremdriftsenergi", "startstasjonNavn", "sluttstasjonNavn") VALUES ('1', 'Nordlansbanen', 'diesel', 'Trondheim S', 'Bodø');
+INSERT INTO "main"."Banestrekning" ("strekningID", "navn", "fremdriftsenergi", "startstasjonNavn", "sluttstasjonNavn") VALUES ('1', 'Nordlandsbanen', 'diesel', 'Trondheim S', 'Bodø');
 
 INSERT INTO "main"."Delstrekning"
 ("sportype", "lengde", "stasjon1", "stasjon2")
