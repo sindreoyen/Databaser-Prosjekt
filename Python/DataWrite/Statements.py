@@ -8,3 +8,5 @@ delstrekning = "INSERT INTO Delstrekning VALUES(?,?,?,?,?)"
 banestrekning = "INSERT INTO Banestrekning VALUES(?,?,?,?,?)"
 
 harDelstrekning = "INSERT INTO HarDelstrekning VALUES(?,?)"
+
+sete = "INSERT INTO Sete VALUES(?,?)"
