@@ -212,4 +212,14 @@ CREATE TABLE IF NOT EXISTS "Ukedag" (
 	"navn"	TEXT NOT NULL CHECK("navn" IN ("man", "tir", "ons", "tor", "fre", "lør", "søn")) UNIQUE,
 	PRIMARY KEY("navn")
 );
+CREATE TABLE IF NOT EXISTS "SetebillettIOrdre" (
+	"billettID"	INTEGER NOT NULL UNIQUE,
+	"seteNR"	INTEGER NOT NULL,
+	"vognID"	INTEGER NOT NULL,
+	"delstrekningID"	INTEGER NOT NULL,
+	PRIMARY KEY("billettID","seteNR","vognID","delstrekningID"),
+	FOREIGN KEY("delstrekningID") REFERENCES "Delstrekning" ON UPDATE CASCADE ON DELETE CASCADE,
+	FOREIGN KEY("seteNR","vognID") REFERENCES "Sete" ON UPDATE CASCADE ON DELETE CASCADE,
+	FOREIGN KEY("billettID") REFERENCES "Billett" ON UPDATE CASCADE ON DELETE CASCADE
+);
 COMMIT;
