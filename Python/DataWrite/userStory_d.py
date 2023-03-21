@@ -1,7 +1,7 @@
 import sqlite3
 
 ### Connecting to database #################
-connection = sqlite3.connect("tog_v2.db")
+connection = sqlite3.connect("tog_v3.db")
 cursor = connection.cursor()
 ############################################
 
@@ -11,8 +11,8 @@ FROM Delstrekning
 NATURAL JOIN HarDelstrekning
 NATURAL JOIN Banestrekning
 WHERE Banestrekning.navn = 'Nordlandsbanen'"""):
-    print(cursor.fetchall)
-    stationList.append(cursor.fetchone)
+    print(cursor.fetchall())
+    stationList.append(cursor.fetchone())
     print(stationList)
 
 
