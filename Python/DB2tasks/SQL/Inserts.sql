@@ -231,55 +231,55 @@ VALUES ('fre', 3);
 
 INSERT INTO "main"."KjørerStrekning"
 ("ruteID", "delstrekningID", "tidStasjon1", "tidStasjon2")
-VALUES (1, 1, 0749, 0951);
+VALUES (1, 1, 28140, 35460);
 
 INSERT INTO "main"."KjørerStrekning"
 ("ruteID", "delstrekningID", "tidStasjon1", "tidStasjon2")
-VALUES (1, 2, 0951, 1320);
+VALUES (1, 2, 35460, 48000);
 
 INSERT INTO "main"."KjørerStrekning"
 ("ruteID", "delstrekningID", "tidStasjon1", "tidStasjon2")
-VALUES (1, 3, 1320, 1431);
+VALUES (1, 3, 48000, 52260);
 
 INSERT INTO "main"."KjørerStrekning"
 ("ruteID", "delstrekningID", "tidStasjon1", "tidStasjon2")
-VALUES (1, 4, 1431, 1649);
+VALUES (1, 4, 52260, 60540);
 
 INSERT INTO "main"."KjørerStrekning"
 ("ruteID", "delstrekningID", "tidStasjon1", "tidStasjon2")
-VALUES (1, 5, 1649, 1734);
+VALUES (1, 5, 60540, 63240);
 
 INSERT INTO "main"."KjørerStrekning"
 ("ruteID", "delstrekningID", "tidStasjon1", "tidStasjon2")
-VALUES (2, 1, 2305, 0057);
+VALUES (2, 1, 83100, 3420);
 
 INSERT INTO "main"."KjørerStrekning"
 ("ruteID", "delstrekningID", "tidStasjon1", "tidStasjon2")
-VALUES (2, 2, 0057, 0441);
+VALUES (2, 2, 3420, 16860);
 
 INSERT INTO "main"."KjørerStrekning"
 ("ruteID", "delstrekningID", "tidStasjon1", "tidStasjon2")
-VALUES (2, 3, 0441, 0555);
+VALUES (2, 3, 16860, 21300);
 
 INSERT INTO "main"."KjørerStrekning"
 ("ruteID", "delstrekningID", "tidStasjon1", "tidStasjon2")
-VALUES (2, 4, 0555, 0819);
+VALUES (2, 4, 21300, 29940);
 
 INSERT INTO "main"."KjørerStrekning"
 ("ruteID", "delstrekningID", "tidStasjon1", "tidStasjon2")
-VALUES (2, 5, 0819, 0905);
+VALUES (2, 5, 29940, 32700);
 
 INSERT INTO "main"."KjørerStrekning"
 ("ruteID", "delstrekningID", "tidStasjon1", "tidStasjon2")
-VALUES (3, 1, 1413, 1231);
+VALUES (3, 1, 51180, 45060);
 
 INSERT INTO "main"."KjørerStrekning"
 ("ruteID", "delstrekningID", "tidStasjon1", "tidStasjon2")
-VALUES (3, 2, 1231, 0914);
+VALUES (3, 2, 45060, 33240);
 
 INSERT INTO "main"."KjørerStrekning"
 ("ruteID", "delstrekningID", "tidStasjon1", "tidStasjon2")
-VALUES (3, 3, 0914, 0811);
+VALUES (3, 3, 33240, 29460);
 
 INSERT INTO "main"."Sete"
 ("vognID", "seteNR")
