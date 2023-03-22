@@ -115,9 +115,9 @@ INSERT INTO "main"."Vognoppsett" ("oppsettID", "antallSovevogner", "antallSittev
 
 INSERT INTO "main"."VognIOppsett" ("oppsettID", "vognID", "vognNR") VALUES ('1', '1', '1');
 INSERT INTO "main"."VognIOppsett" ("oppsettID", "vognID", "vognNR") VALUES ('1', '2', '2');
-INSERT INTO "main"."VognIOppsett" ("oppsettID", "vognID", "vognNR") VALUES ('1', '3', '1');
+INSERT INTO "main"."VognIOppsett" ("oppsettID", "vognID", "vognNR") VALUES ('2', '3', '1');
 INSERT INTO "main"."VognIOppsett" ("oppsettID", "vognID", "vognNR") VALUES ('1', '5', '2');
-INSERT INTO "main"."VognIOppsett" ("oppsettID", "vognID", "vognNR") VALUES ('1', '4', '1');
+INSERT INTO "main"."VognIOppsett" ("oppsettID", "vognID", "vognNR") VALUES ('3', '4', '1');
 
 INSERT INTO "main"."Sovekupe"
 ("vognID", "kupeNR")
