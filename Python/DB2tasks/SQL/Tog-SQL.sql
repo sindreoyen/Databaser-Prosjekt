@@ -29,6 +29,7 @@ CREATE TABLE IF NOT EXISTS "Jernbanestasjon" (
 CREATE TABLE IF NOT EXISTS "TogruteForekomst" (
 	"ruteID"	INTEGER NOT NULL,
 	"dato"	INTEGER NOT NULL CHECK("dato" > 0),
+	"navn" TEXT NOT NULL,
 	FOREIGN KEY("ruteID") REFERENCES "Togrute"("ruteID") ON UPDATE CASCADE ON DELETE CASCADE,
 	PRIMARY KEY("ruteID","dato")
 );

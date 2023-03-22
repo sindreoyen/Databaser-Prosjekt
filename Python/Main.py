@@ -6,8 +6,12 @@ runScript: str = ""
 prompt = """
 Hei! Vennligst velg hvilken brukerhistorie du vil kjøre:
 Disse er tilgjengelige: 
+C - Togruter innom stasjon (Ukedag)
+D - Søk blant togruter mellom start og sluttstasjon, basert og sortert på dato og tid
+E - Registrere bruker
+G - Finn og kjøpe ledige billetter
+H - Se din billetthistorikk
 """
-prompt += str(available) + "\n"
 
 while runScript.capitalize() not in available:
     runScript = input(prompt)
@@ -18,4 +22,4 @@ try:
     print(path)
     subprocess.run(["python", path])
 except Exception:
-    print("Det har oppstått en feil. Vennligst kjør brukerhistorien direkte fra Userstories.")
+    print("Det har oppstått en feil. Vennligst kjør brukerhistorien direkte fra '/DB2Tasks'.")
