@@ -1,7 +1,7 @@
 import DB2tasks.LocalData
 import subprocess
 
-available: list = ["C", "D", "E"]
+available: list = ["C", "D", "E", "G", "H"]
 runScript: str = ""
 prompt = """
 Hei! Vennligst velg hvilken brukerhistorie du vil kjøre:
