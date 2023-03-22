@@ -1,4 +1,5 @@
-import Userstories
+import DB2tasks.LocalData
+import subprocess
 
 available: list = ["C", "D", "E"]
 runScript: str = ""
@@ -13,6 +14,8 @@ while runScript.capitalize() not in available:
 
 ### Run script
 try:
-    exec(open("./Userstories/UserStory_" + runScript.capitalize() + ".py").read())
+    path = DB2tasks.LocalData.path + "/UserStory_" + runScript.capitalize() + ".py"
+    print(path)
+    subprocess.run(["python", path])
 except Exception:
     print("Det har oppstått en feil. Vennligst kjør brukerhistorien direkte fra Userstories.")

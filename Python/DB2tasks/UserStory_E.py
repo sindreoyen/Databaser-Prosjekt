@@ -1,7 +1,8 @@
 import sqlite3
+import LocalData
 
 ### Connecting to database #################
-connection = sqlite3.connect("tog_v2.db")
+connection = LocalData.getDBConnection()
 cursor = connection.cursor()
 ############################################
 

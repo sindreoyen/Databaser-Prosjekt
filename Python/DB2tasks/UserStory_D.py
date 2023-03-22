@@ -1,8 +1,9 @@
 import sqlite3
 import datetime
+import LocalData
 
 ### Connecting to database #################
-connection = sqlite3.connect("tog_v3.db")
+connection = LocalData.getDBConnection()
 cursor = connection.cursor()
 ############################################
 

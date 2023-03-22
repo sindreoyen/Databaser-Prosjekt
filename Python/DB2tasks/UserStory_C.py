@@ -1,7 +1,9 @@
 import sqlite3
+import LocalData
+
 
 ### Connecting to database #################
-connection = sqlite3.connect("tog_v3.db")
+connection = LocalData.getDBConnection()
 cursor = connection.cursor()
 ############################################
 
@@ -34,13 +36,6 @@ try:
     print(togruter)
 except Exception:
     print("Ugyldig input")
-
-
-
-
-
-##if not ukedag.lower() in ukedagDict:
-    ##raise Exception("Ugyldig ukedag")
 
 
 ### Adding changes ###
