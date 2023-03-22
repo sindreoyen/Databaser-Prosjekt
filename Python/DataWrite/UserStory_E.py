@@ -1,7 +1,7 @@
 import sqlite3
 
 ### Connecting to database #################
-connection = sqlite3.connect("tog_v2.db")
+connection = sqlite3.connect("tog_v3.db")
 cursor = connection.cursor()
 ############################################
 
