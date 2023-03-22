@@ -34,7 +34,7 @@ def __checkDBHasData(connection: sqlite3.Connection) -> bool:
     
 def __fillDB(connection: sqlite3.connect) -> sqlite3.Connection:
     setup = "Tog-SQL.sql"
-    inserts = ["Inserts.sql", "Senger.sql"] #Seter.sql
+    inserts = ["Inserts.sql"] #Seter.sql
     __execScript(sqlite_file=setup, connection=connection)
     for script in inserts:
         __execScript(sqlite_file=script, connection=connection)

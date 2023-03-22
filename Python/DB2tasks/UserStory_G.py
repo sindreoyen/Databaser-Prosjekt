@@ -4,8 +4,6 @@ import G_methods.seats
 import G_methods.coupes
 import Utilities
 
-print("Ikke laget ferdig")
-
 ### Connecting to database #################
 connection = LocalData.getDBConnection()
 cursor = connection.cursor()

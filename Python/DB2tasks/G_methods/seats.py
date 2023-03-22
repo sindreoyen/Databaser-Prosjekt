@@ -104,11 +104,6 @@ def orderSeat(connection: sqlite3.Connection, ids: list,
         except: chosenCartSeats[cart] = [seat]
     createPurchase(delstrekningIDs=delstrekningIDs, chosenCartSeats=chosenCartSeats, customerID=customerID,
                    connection=connection, forekomst=selected)
-    
-    ###################
-    connection.commit()
-    connection.close()
-    ###################
   
 ### Send in purchase 
 def createPurchase(delstrekningIDs: list, chosenCartSeats: dict, customerID: int,
@@ -136,7 +131,8 @@ def createPurchase(delstrekningIDs: list, chosenCartSeats: dict, customerID: int
             cursor.execute("SELECT * FROM Billett ORDER BY billettID DESC LIMIT 1")
             billettID = cursor.fetchone()[0]
             for delstrekning in delstrekningIDs:
-                print("TODO: Fix SetebillettIOrdre table")
+                cursor.execute("INSERT INTO SetebillettIOrdre VALUES(?,?,?,?,?)",
+                               (billettID, seat, key, delstrekning, orderID))
             print("Sete nr", str(seat), "(" + "vogn" + str(key) + ")")
 
     
