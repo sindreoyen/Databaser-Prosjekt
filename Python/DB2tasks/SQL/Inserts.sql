@@ -474,25 +474,25 @@ INSERT INTO "main"."Sete"
 VALUES (4, 12);
 
 INSERT INTO "main"."TogruteForekomst"
-("ruteID", "dato")
-VALUES (1, 1680472800);
+("ruteID", "dato", "navn")
+VALUES (1, 1680472800, "dagtog");
 
 INSERT INTO "main"."TogruteForekomst"
-("ruteID", "dato")
-VALUES (1, 1680559200);
+("ruteID", "dato", "navn")
+VALUES (1, 1680559200, "dagtog");
 
 INSERT INTO "main"."TogruteForekomst"
-("ruteID", "dato")
-VALUES (2, 1680472800);
+("ruteID", "dato", "navn")
+VALUES (2, 1680472800, "nattog");
 
 INSERT INTO "main"."TogruteForekomst"
-("ruteID", "dato")
-VALUES (2, 1680559200);
+("ruteID", "dato", "navn")
+VALUES (2, 1680559200, "dagtog");
 
 INSERT INTO "main"."TogruteForekomst"
-("ruteID", "dato")
-VALUES (3, 1680472800);
+("ruteID", "dato", "navn")
+VALUES (3, 1680472800, "morgentog");
 
 INSERT INTO "main"."TogruteForekomst"
-("ruteID", "dato")
-VALUES (3, 1680559200);
+("ruteID", "dato", "navn")
+VALUES (3, 1680559200, "morgentog");
