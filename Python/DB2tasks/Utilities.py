@@ -77,6 +77,6 @@ def getTogruteWithDir(connection: sqlite3.Connection,
                       dir: int) -> list:
     cursor = connection.cursor()
     togruteIDs = []
-    for row in cursor.execute("SELECT ruteID from Togrute WHERE medHovedRetning = ?", (withMainDir,)):
+    for row in cursor.execute("SELECT ruteID from Togrute WHERE medHovedRetning = ?", (dir,)):
         togruteIDs.append(row[0])
     return togruteIDs

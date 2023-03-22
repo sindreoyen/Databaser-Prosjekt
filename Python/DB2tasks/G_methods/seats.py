@@ -12,8 +12,8 @@ def orderSeat(connection: sqlite3.Connection, ids: list,
         statement = """
         SELECT DATE(Tf.dato, 'unixepoch', 'localtime'), 
         TIME(KS.tidStasjon1, 'unixepoch', 'localtime'), 
-        TIME(KS.tidStasjon2, 'unixepoch', 'localtime'), 
-        Ds.stasjon1, Ds.stasjon2, Tf.navn, Tf.dato
+        TIME(KS.tidStasjon2, 'unixepoch', 'localtime'),
+        Tf.navn, Tf.dato, Tf.ruteID
         FROM 
         Togruteforekomst Tf 
         LEFT OUTER NATURAL JOIN KjørerStrekning KS
@@ -24,12 +24,23 @@ def orderSeat(connection: sqlite3.Connection, ids: list,
         statement += "\nORDER BY Tf.dato, KS.tidStasjon" + postfix + " DESC"
 
         for row in cursor.execute(statement, (id,)):
-            date = row[0]
+            if idx == 0:
+                print("Velg ved å skrive inn nøkkelen til venstre, hvilken rute du ønsker:")
+            trainMap[idx] = (row[5], row[3], row[4])
             startTime = row[1 if withMainDir else 2]
-            name = row[5]
-            print(date + ": Toget,", name, "går fra", startStation, "kl:", startTime)
-
-
+            name = row[3]
+            print("["+str(idx)+"]", row[0] + ": Tog", name, "går fra", startStation, "kl:", startTime)
+            idx += 1
+    key: int = -1
+    if idx == 0:
+        print("Ingen ledige togturer")
+        return
+    
+    while key not in trainMap.keys():
+        key = int(input("Nøkkel: "))
+    
+    selected = trainMap[key]
+    print("Selected trainride: ", selected)
 
     statement = """
     SELECT Sete.seteNR, VognIOppsett.vognNR, Tf.navn, Tf.ruteID,
@@ -43,9 +54,9 @@ def orderSeat(connection: sqlite3.Connection, ids: list,
     Togrute LEFT OUTER NATURAL JOIN
     TogruteForekomst Tf LEFT OUTER NATURAL JOIN
     Delstrekning ds
+    WHERE Tf.ruteID=? AND Tf.navn=? AND Tf.dato=?
     ORDER BY Tf.dato, Sete.seteNR, VognIOppsett.vognNR ASC
     """
     allSeats: list = []
-    for row in cursor.execute(statement):
-        allSeats.append(row)
-    print(allSeats.count())
+    for row in cursor.execute(statement, (selected[0], selected[1], selected[2])):
+        print(row)
