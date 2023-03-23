@@ -1,7 +1,9 @@
 from lib2to3.pgen2.pgen import DFAState
 import sqlite3
 import LocalData
-
+import Validators
+import datetime
+import time
 
 ### Connecting to database #################
 connection = LocalData.getDBConnection()
@@ -10,54 +12,89 @@ cursor = connection.cursor()
 
 
 ##Validate if epost exist in db
-##epost = input("Skriv inn din epost som du er oppgitt med hos oss: ")
+user: tuple = None
+while user == None:
+    email = input("Hei! Vennligst skriv eposten til brukeren du ønsker å sjekke reiser for: ")
+    user = Validators.fetchUser(email=email, connection=connection)
+    print("Her er dine fremtidige reiser:")
 
-# cursor.execute("SELECT epost FROM Kunde")
-# eposter_temp = cursor.fetchall()
-# eposter = []
-
-# for row in eposter_temp:
-#     eposter.append(row[0])
-# if epost not in eposter:
-#     raise Exception("Epost finnes ikke i kunderegisteret")
-
-##make station list
-
-cursor.execute("""SELECT * from Kunde""")
-kunde = cursor.fetchall()
-print(kunde)
-## Find departure time and arrival 
-
-cursor.execute("""SELECT  MAX(MAX(KjørerStrekning.tidStasjon1), MAX(KjørerStrekning.tidStasjon2)) as ankomst, MIN(MIN(KjørerStrekning.tidStasjon1), MIN(KjørerStrekning.tidStasjon2)) as avgang
+## Get out data from db
+cursor.execute("""SELECT MAX(MAX(KjørerStrekning.tidStasjon1), MAX(KjørerStrekning.tidStasjon2)) as ankomst, MIN(MIN(KjørerStrekning.tidStasjon1), MIN(KjørerStrekning.tidStasjon2)) as avgang, Kundeordre.ordreNR, SetebillettIOrdre.seteNR, TogruteForekomst.dato, MAX(Delstrekning.delstrekningID) , MIN(Delstrekning.delstrekningID), Togrute.medHovedRetning
 FROM Kundeordre
 NATURAL Join Kunde
 INNER JOIN TogruteForekomst USING (ruteID, dato)
 NATURAL JOIN Togrute
-NATURAL JOIN Setebillett
 NATURAL JOIN BillettIOrdre
 NATURAL JOIN SetebillettIOrdre
 NATURAL JOIN Delstrekning
 NATURAL JOIN KjørerStrekning
-WHERE Kunde.epost = 'e.saetre@online.no'
-GROUP BY ordreNR""")
-# times = cursor.fetchall()
-# departureTime = times[0][1]
-# arrivalTime = times [0][0]
-# print(departureTime, arrivalTime)
-print(cursor.fetchall())
+WHERE Kunde.epost = ?
+GROUP BY ordreNR, seteNR""", (email,))
+times = cursor.fetchall()
 
-"""SELECT  MAX(MAX(KjørerStrekning.tidStasjon1), MAX(KjørerStrekning.tidStasjon2)) as ankomst, MIN(MIN(KjørerStrekning.tidStasjon1), MIN(KjørerStrekning.tidStasjon2)) as avgang
-FROM Kundeordre
-NATURAL Join Kunde
-INNER JOIN TogruteForekomst USING (ruteID, dato)
-NATURAL JOIN Togrute
-NATURAL JOIN Setebillett
-NATURAL JOIN BillettIOrdre
-NATURAL JOIN SetebillettIOrdre
-NATURAL JOIN Delstrekning
-NATURAL JOIN KjørerStrekning
-WHERE Kunde.epost = 'e@o.no'
-GROUP BY ordreNR, vognID, seteNR"""
+#time
+timeNow = int (time.time())
+tidAvreise = times[0][-4] + times[0][1]
+print(timeNow)
+print(tidAvreise)
+
+# Functions for finding station
+def findMinStation(stationID):
+    cursor.execute("""SELECT Delstrekning.stasjon1 
+    FROM Delstrekning
+    WHERE delstrekningID = ?""",(stationID,))
+    station = cursor.fetchall()
+    return station[0][0]
+
+def findMaxStation(stationID):
+    cursor.execute("""SELECT Delstrekning.stasjon2 
+    FROM Delstrekning
+    WHERE delstrekningID = ?""",(stationID,))
+    station = cursor.fetchall()
+    return station[0][0]
+
+## Make dict with all orders
+orderDict = {}
+for row in times:
+    if row[2] not in orderDict.keys():
+        order = []
+        departureTime = row[1]
+        arrivalTime = row[0]
+        minStationID = row[-2]
+        maxStationID = row[-3]
+        date = row[-4]
+        seats = []
+        seats.append(row[3])
+        order.append(date)
+        order.append(departureTime)
+        order.append(arrivalTime)
+        if row[-1] == 1:
+            startStation = findMinStation(minStationID)
+            endStation = findMaxStation(maxStationID)
+        else:
+            startStation = findMaxStation(maxStationID)
+            endStation = findMinStation(minStationID)
+        order.append(startStation)
+        order.append(endStation)
+        order.append(seats)
+        orderDict[row[2]] = order
+    else:
+        order = orderDict[row[2]]
+        order[-1].append(row[3])
+        orderDict[row[2]] = order
+
+for key in orderDict.keys():
+    orderList = orderDict[key]
+    avgangsDato = orderList[0]
+    avgangsTid = orderList[1]
+    ankomstTid = orderList[2]
+    startStasjon = orderList[3]
+    sluttStasjon = orderList[4]
+    sete = orderList[5]
+    if timeNow < ankomstTid + avgangsDato:
+        print("Avreise: ", datetime.datetime.fromtimestamp(avgangsTid + avgangsDato), startStasjon, "Ankomst:", datetime.datetime.fromtimestamp(ankomstTid + avgangsDato), sluttStasjon, "Sete(r):", sete)
+#Må fikse at ankomst ved midnatt blir good. 
+
 ### Adding changes ###
 connection.commit()
 connection.close()
