@@ -13,7 +13,6 @@ user: tuple = None
 while user == None:
     email = input("Hei! Vennligst skriv eposten til brukeren du er registrert med: ")
     user = Validators.fetchUser(email=email, connection=connection)
-print(user)
 
 def orderCoupe():
     print("Coupe")
