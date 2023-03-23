@@ -130,7 +130,7 @@ def createPurchase(delstrekningIDs: list, chosenCartSeats: dict, customerID: int
             cursor.execute("SELECT * FROM Billett ORDER BY billettID DESC LIMIT 1")
             billettID = cursor.fetchone()[0]
             if (orderID != -1):
-                cursor.execute("INSERT INTO BillettIOrdre VALUES(?,?)"), (orderID, billettID)
+                cursor.execute("INSERT INTO BillettIOrdre VALUES(?,?)",(orderID, billettID))
             for delstrekning in delstrekningIDs:
                 cursor.execute("INSERT INTO SetebillettIOrdre VALUES(?,?,?,?,?)",
                                (billettID, seat, key, delstrekning, orderID))
