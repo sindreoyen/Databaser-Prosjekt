@@ -7,10 +7,17 @@ connection = LocalData.getDBConnection()
 cursor = connection.cursor()
 ############################################
 
-stasjon = input("Hvilken stasjon ønsker du å velge? ")
-ukedag_temp = input("Hvilken ukedag ønsker du å sjekke togreiser for? ")
+stations: list = []
+for row in cursor.execute("SELECT navn FROM Jernbanestasjon"):
+    stations.append(row[0])
 
-ukedagDict = {
+print("Tilgjengelige stasjoner: " + str(stations))
+station = ""
+while station not in stations:
+    station: str = input("Hvilken stasjon ønsker du å velge?: ")
+
+
+weekdayDict: dict = {
     "mandag": "man",
     "tirsdag": "tir",
     "onsdag": "ons",
@@ -19,11 +26,19 @@ ukedagDict = {
     "lørdag": "lør",
     "søndag": "søn"
 }
+weekday: str = ""
+while True:
+    try: 
+        weekday = input("Hvilken ukedag ønsker du å sjekke togreiser for?: ")
+        weekday = weekdayDict[weekday.lower()]
+        break
+    except: 
+        print("Feil format!")
+        print("Forventet: " + str(list(weekdayDict.keys())))
 
-ukedag = ukedagDict[ukedag_temp.lower()]
 
 try:
-    cursor.execute("""SELECT DISTINCT ruteID
+    for row in cursor.execute("""SELECT DISTINCT ruteID
                       FROM Togrute 
                       NATURAL JOIN (SELECT KjørerStrekning.ruteID, KjørerStrekning.delstrekningID, Delstrekning.stasjon1, Delstrekning.stasjon2
                                    FROM KjørerStrekning
@@ -31,9 +46,10 @@ try:
                                    WHERE Delstrekning.stasjon1 = ? OR Delstrekning.stasjon2 = ?)
                       NATURAL JOIN GårPåUkedag
                       WHERE GårPåUkedag.navn = ?""",
-                   (stasjon, stasjon, ukedag))
-    togruter = cursor.fetchall()
-    print(togruter)
+                   (station, station, weekday)):
+        print(row)
+        print("##### TODO: Fiks bedre output her")
+    
 except Exception:
     print("Ugyldig input")
 
