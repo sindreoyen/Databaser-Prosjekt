@@ -1,5 +1,4 @@
 from lib2to3.pgen2.pgen import DFAState
-from multiprocessing import connection
 import sqlite3
 import LocalData
 

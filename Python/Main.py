@@ -22,4 +22,4 @@ try:
     print(path)
     subprocess.run(["python", path])
 except Exception:
-    print("Det har oppstått en feil. Vennligst kjør brukerhistorien direkte fra '/DB2Tasks'.")
+    print("Det har oppstått en feil. Vennligst kjør brukerhistorien direkte fra '/DB2Tasks/UserStory_" + runScript.capitalize() +"'")

@@ -487,7 +487,7 @@ VALUES (2, 1680472800, "nattog");
 
 INSERT INTO "main"."TogruteForekomst"
 ("ruteID", "dato", "navn")
-VALUES (2, 1680559200, "dagtog");
+VALUES (2, 1680559200, "nattog");
 
 INSERT INTO "main"."TogruteForekomst"
 ("ruteID", "dato", "navn")

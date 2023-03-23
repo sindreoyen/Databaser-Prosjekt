@@ -43,7 +43,6 @@ def orderSeat(connection: sqlite3.Connection, ids: list,
     
     ## Find the available tickets for the trainride
     selected = trainMap[key]
-    print("Selected trainride: ", selected)
     delstrekningIDs: list = fetchDelstrekningIDs(connection=connection,
                                            startStation=startStation, endStation=endStation,
                                            togruteID=selected[0], dir=withMainDir)
@@ -130,10 +129,12 @@ def createPurchase(delstrekningIDs: list, chosenCartSeats: dict, customerID: int
             cursor.execute("INSERT INTO Billett VALUES(NULL)")
             cursor.execute("SELECT * FROM Billett ORDER BY billettID DESC LIMIT 1")
             billettID = cursor.fetchone()[0]
+            if (orderID != -1):
+                cursor.execute("INSERT INTO BillettIOrdre VALUES(?,?)"), (orderID, billettID)
             for delstrekning in delstrekningIDs:
                 cursor.execute("INSERT INTO SetebillettIOrdre VALUES(?,?,?,?,?)",
                                (billettID, seat, key, delstrekning, orderID))
-            print("Sete nr", str(seat), "(" + "vogn" + str(key) + ")")
+            print("Bekreftet bestilt: Sete nr", str(seat), "(" + "Vogn " + str(key) + ")")
 
     
 
