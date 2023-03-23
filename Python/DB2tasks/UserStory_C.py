@@ -49,7 +49,7 @@ try:
                       LEFT JOIN TogruteForekomst Tf ON Togrute.ruteID=Tf.ruteID
                       WHERE GårPåUkedag.navn = ?""",
                    (station, station, weekday)):
-        try: print("Togrute " + str(row[0]) + ",", str(row[1]) + ", går innom " + station, "på", str() + "er.")
+        try: print("Togrute " + str(row[0]) + ",", str(row[1]) + ", går innom " + station, "på", weekday_long + "er.")
         except: print("Noe gikk galt i visning av togrute.")
     
 except Exception:
