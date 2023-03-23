@@ -4,8 +4,6 @@ import G_methods.seats
 import G_methods.coupes
 import Utilities
 
-print("Ikke laget ferdig")
-
 ### Connecting to database #################
 connection = LocalData.getDBConnection()
 cursor = connection.cursor()
@@ -30,7 +28,7 @@ if choice.lower() == "s":
     ids = Utilities.getTogruteWithDir(connection=connection, dir=res[2])
     G_methods.seats.orderSeat(connection=connection, ids=ids,
                               startStation=res[0], endStation=res[1],
-                              withMainDir=res[2])
+                              withMainDir=res[2], customerID=user[0])
 elif choice.lower() == "k":
     G_methods.coupes.orderCoupe(connection=connection)
     
