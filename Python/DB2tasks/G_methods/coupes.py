@@ -99,11 +99,11 @@ def orderCoupe(connection: sqlite3.Connection, ids: list,
         try: chosenCoupeBed[coupe].append(bed)
         except: chosenCoupeBed[coupe] = [bed]
     createPurchase(chosenCoupeBeds=chosenCoupeBed, customerID=customerID,
-                   connection=connection, forekomst=selected, wagon=wagon, wagonNR=wagonNR)
+                   connection=connection, forekomst=selected, wagon=wagon, wagonNR=wagonNR, startStation=startStation, endStation=endStation)
 
 def createPurchase(chosenCoupeBeds: dict, customerID: int,
                    connection: sqlite3.Connection,
-                   forekomst: tuple, wagon: int, wagonNR: int):
+                   forekomst: tuple, wagon: int, wagonNR: int, startStation: str, endStation: str):
     cursor = connection.cursor()
     timestamp = int(datetime.datetime.now().timestamp())
     print("Legger inn din bestilling ...")
@@ -128,7 +128,7 @@ def createPurchase(chosenCoupeBeds: dict, customerID: int,
             if (orderID != -1):
                 cursor.execute("INSERT INTO BillettIOrdre VALUES(?,?)",(orderID, billettID))
             cursor.execute("INSERT INTO KupeBillett VALUES(?,?,?,?)", (billettID, coupe, bed, wagon))
-            cursor.execute("INSERT INTO HarKupeBillett VALUES(?,?,?,?,?,?)",
-                           (billettID, wagon, coupe, bed, forekomst[0], forekomst[2]))
+            cursor.execute("INSERT INTO HarKupeBillett VALUES(?,?,?,?,?,?,?,?)",
+                           (billettID, wagon, coupe, bed, forekomst[0], forekomst[2], startStation, endStation))
             print("Bekreftet bestilt: Seng nr", str(bed), "(" + "kupé nr. " + str(coupe) + ")"
                   + ", i vogn nr: " + str(wagonNR))
