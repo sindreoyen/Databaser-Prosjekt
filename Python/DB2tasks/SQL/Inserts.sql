@@ -271,11 +271,11 @@ VALUES (2, 5, 29940, 32700);
 
 INSERT INTO "main"."KjørerStrekning"
 ("ruteID", "delstrekningID", "tidStasjon1", "tidStasjon2")
-VALUES (3, 1, 51180, 45060);
+VALUES (3, 1, 51180, 44400);
 
 INSERT INTO "main"."KjørerStrekning"
 ("ruteID", "delstrekningID", "tidStasjon1", "tidStasjon2")
-VALUES (3, 2, 45060, 33240);
+VALUES (3, 2, 44400, 33240);
 
 INSERT INTO "main"."KjørerStrekning"
 ("ruteID", "delstrekningID", "tidStasjon1", "tidStasjon2")
