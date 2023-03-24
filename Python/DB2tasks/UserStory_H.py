@@ -51,22 +51,35 @@ def findMaxStation(stationID):
     station = cursor.fetchall()
     return station[0][0]
 
-def findTime(ruteID, dato, delstrekningID, medHovedretning, typeStasjon):
-    cursor.execute("""SELECT KjørerStrekning.tidStasjon1, KjørerStrekning.tidStasjon2
-FROM TogruteForekomst
-NATURAL JOIN KjørerStrekning
-WHERE ruteID = ? AND dato = ? AND delstrekningID = ?""", (ruteID, dato, delstrekningID,))
+def find_time(rute_id: int, dato: str, delstrekning_id: int, med_hovedretning: bool, type_stasjon: int) -> int:
+    """Find time based on rute ID, date, station ID, direction and station type."""
+    query = "SELECT KjørerStrekning.tidStasjon1, KjørerStrekning.tidStasjon2 "
+    query += "FROM TogruteForekomst NATURAL JOIN KjørerStrekning "
+    query += "WHERE ruteID = ? AND dato = ? AND delstrekningID = ?"
+    cursor.execute(query, (rute_id, dato, delstrekning_id,))
+    result = cursor.fetchall()[0]
 
-    if medHovedretning:
-        if typeStasjon == 0:
-            return cursor.fetchall()[0][0]
-        else:
-            return cursor.fetchall()[0][1]
+    if med_hovedretning:
+        return result[type_stasjon]
     else:
-        if typeStasjon == 0:
-            return cursor.fetchall()[0][1]
-        else:
-            return cursor.fetchall()[0][0]
+        return result[1 - type_stasjon]
+
+# def findTime(ruteID, dato, delstrekningID, medHovedretning, typeStasjon):
+#     cursor.execute("""SELECT KjørerStrekning.tidStasjon1, KjørerStrekning.tidStasjon2
+# FROM TogruteForekomst
+# NATURAL JOIN KjørerStrekning
+# WHERE ruteID = ? AND dato = ? AND delstrekningID = ?""", (ruteID, dato, delstrekningID,))
+
+#     if medHovedretning:
+#         if typeStasjon == 0:
+#             return cursor.fetchall()[0][0]
+#         else:
+#             return cursor.fetchall()[0][1]
+#     else:
+#         if typeStasjon == 0:
+#             return cursor.fetchall()[0][1]
+#         else:
+#             return cursor.fetchall()[0][0]
 
 ## Make dict with all orders
 orderDict = {}
