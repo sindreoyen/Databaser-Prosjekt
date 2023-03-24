@@ -167,8 +167,10 @@ for row in kupéBillettInfo:
         order[-1].append(row[-4])
         orderDict[row[0]] = order
 
+sorted_orderDict = dict(sorted(orderDict.items()))
+
 # Make output for every order       
-for key in orderDict.keys():
+for key in sorted_orderDict.keys():
     orderList = orderDict[key]
     avgangsDato = orderList[0]
     avgangsTid = orderList[1]
