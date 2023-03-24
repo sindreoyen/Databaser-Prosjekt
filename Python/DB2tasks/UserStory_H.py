@@ -34,7 +34,7 @@ times = cursor.fetchall()
 
 #time
 timeNow = int (time.time())
-tidAvreise = times[0][-4] + times[0][1]
+tidAvreise = times[0][-4] + times[0][1] + 3600*2
 print(timeNow)
 print(tidAvreise)
 
@@ -94,9 +94,9 @@ for key in orderDict.keys():
     print(ankomstTid)
     print(avgangsTid)
     if timeNow < ankomstTid + avgangsDato:
-        print("Avreise: ", datetime.datetime.fromtimestamp(avgangsTid + avgangsDato), startStasjon, "Ankomst:", datetime.datetime.fromtimestamp(ankomstTid + avgangsDato), sluttStasjon, "Sete(r):", sete)
+        print("Avreise:", datetime.datetime.fromtimestamp(avgangsTid + avgangsDato), startStasjon, "Ankomst:", datetime.datetime.fromtimestamp(ankomstTid + avgangsDato).time(), sluttStasjon, "Sete(r):", sete)
+        print(orderList)
 #Må fikse at ankomst ved midnatt blir good. 
-
 ### Adding changes ###
 connection.commit()
 connection.close()

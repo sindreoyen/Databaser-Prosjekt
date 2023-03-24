@@ -97,7 +97,7 @@ def orderSeat(connection: sqlite3.Connection, ids: list,
             seat = input("Hvilket sete ønsker du?: ")
         
         cartSeats[cart].remove(seat)
-        if len[cartSeats[cart]] == 0:
+        if len(cartSeats[cart]) == 0:
             cartSeats.pop(cart)
         mylist: list = []
         print("Du har lagt til sete", seat, "i vogn", cart, "til din bestilling.")
