@@ -51,7 +51,7 @@ def findMaxStation(stationID):
     station = cursor.fetchall()
     return station[0][0]
 
-def find_time(rute_id: int, dato: str, delstrekning_id: int, med_hovedretning: bool, type_stasjon: int) -> int:
+def findTime(rute_id: int, dato: str, delstrekning_id: int, med_hovedretning: bool, type_stasjon: int) -> int:
     """Find time based on rute ID, date, station ID, direction and station type."""
     query = "SELECT KjørerStrekning.tidStasjon1, KjørerStrekning.tidStasjon2 "
     query += "FROM TogruteForekomst NATURAL JOIN KjørerStrekning "
