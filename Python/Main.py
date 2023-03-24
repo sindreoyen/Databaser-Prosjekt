@@ -4,13 +4,13 @@ import subprocess
 available: list = ["C", "D", "E", "G", "H"]
 runScript: str = ""
 prompt = """
-Hei! Vennligst velg hvilken brukerhistorie du vil kjøre:
-Disse er tilgjengelige: 
-C - Togruter innom stasjon (Ukedag)
-D - Søk blant togruter mellom start og sluttstasjon, basert og sortert på dato og tid
-E - Registrere bruker
-G - Finn og kjøpe ledige billetter
-H - Se din billetthistorikk
+Velkommen! Vennligst velg en brukerhistorie fra alternativene nedenfor:
+- C: Finn togruter som passerer en bestemt stasjon på en ukedag
+- D: Søk etter togruter mellom start- og sluttstasjoner, sortert etter dato og tid
+- E: Registrer deg som bruker
+- G: Finn og kjøp tilgjengelige billetter
+- H: Se din billetthistorikk
+Vennligst skriv bokstaven som tilsvarer ønsket brukerhistorie.
 """
 
 while runScript.capitalize() not in available:
