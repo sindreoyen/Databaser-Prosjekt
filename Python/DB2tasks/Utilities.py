@@ -1,4 +1,5 @@
 import sqlite3
+import datetime
 
 ### Utilities - find stations
 def findStationsDirection(connection: sqlite3.Connection) -> tuple:
@@ -80,3 +81,6 @@ def getTogruteWithDir(connection: sqlite3.Connection,
     for row in cursor.execute("SELECT ruteID from Togrute WHERE medHovedRetning = ?", (dir,)):
         togruteIDs.append(row[0])
     return togruteIDs
+
+def getTimeString(unixTime: int) -> str:
+    return datetime.datetime.utcfromtimestamp(unixTime).time()

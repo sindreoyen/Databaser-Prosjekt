@@ -12,8 +12,7 @@ def orderSeat(connection: sqlite3.Connection, ids: list,
     for id in ids:
         statement = """
         SELECT DATE(Tf.dato, 'unixepoch', 'localtime'), 
-        TIME(KS.tidStasjon1, 'unixepoch', 'localtime'), 
-        TIME(KS.tidStasjon2, 'unixepoch', 'localtime'),
+        KS.tidStasjon1, KS.tidStasjon2,
         Tf.navn, Tf.dato, Tf.ruteID
         FROM 
         Togruteforekomst Tf 
@@ -28,7 +27,7 @@ def orderSeat(connection: sqlite3.Connection, ids: list,
             if idx == 0:
                 print("Velg ved å skrive inn nøkkelen til venstre, hvilken rute du ønsker:")
             trainMap[idx] = (row[5], row[3], row[4])
-            startTime = row[1 if withMainDir else 2]
+            startTime = datetime.datetime.utcfromtimestamp(row[1 if withMainDir else 2]).time()
             name = row[3]
             print("["+str(idx)+"]", row[0] + ": Tog", name, "går fra", startStation, "kl:", startTime)
             idx += 1
@@ -84,6 +83,8 @@ def orderSeat(connection: sqlite3.Connection, ids: list,
     chosenCartSeats: dict = {}
     ordering: str = "y"
     while ordering.lower() == "y":
+        if len(cartSeats.keys()) == 0:
+            print("Det er dessverre ikke flere ledige seter på toget..")
         print("Det er ledige seter på toget! I vognene: " + str(list(cartSeats.keys())))
         # Pick cart
         cart = ""
@@ -96,6 +97,8 @@ def orderSeat(connection: sqlite3.Connection, ids: list,
             seat = input("Hvilket sete ønsker du?: ")
         
         cartSeats[cart].remove(seat)
+        if len[cartSeats[cart]] == 0:
+            cartSeats.pop(cart)
         mylist: list = []
         print("Du har lagt til sete", seat, "i vogn", cart, "til din bestilling.")
         ordering = input("Skriv 'y' dersom du ønsker å legge til flere seter, trykk enter for å gå videre: ")
