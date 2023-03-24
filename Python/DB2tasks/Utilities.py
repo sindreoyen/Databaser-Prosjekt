@@ -1,86 +1,76 @@
 import sqlite3
+from typing import Tuple, List
 import datetime
 
-### Utilities - find stations
-def findStationsDirection(connection: sqlite3.Connection) -> tuple:
-    """Returns: startStation, endStation, withMainDir"""
-    ### Get station mapping
+def findStationsDirection(connection: sqlite3.Connection) -> Tuple[str, str, int]:
+    """
+    Returns a tuple containing the start station name, end station name and whether 
+    the main direction is being followed (1 for True, 0 for False)
+    """
     cursor = connection.cursor()
-    stationList = []
-    for row in cursor.execute("""SELECT Delstrekning.stasjon1, Delstrekning.stasjon2
-    FROM Delstrekning
-    NATURAL JOIN HarDelstrekning
-    NATURAL JOIN Banestrekning
-    WHERE Banestrekning.navn = 'Nordlandsbanen'"""):
-        stationList.append(row)
+    stations = cursor.execute("""SELECT Delstrekning.stasjon1, Delstrekning.stasjon2
+                                FROM Delstrekning
+                                NATURAL JOIN HarDelstrekning
+                                NATURAL JOIN Banestrekning
+                                WHERE Banestrekning.navn = 'Nordlandsbanen'""").fetchall()
 
-    stationDict = {}
-    for tuple in stationList: 
-        try:
-            stationDict[tuple[0]].append(tuple[1])
-        except Exception:
-            stationDict[tuple[0]] = [tuple[1]]
-        try:
-            stationDict[tuple[1]].append(tuple[0])
-        except Exception:
-            stationDict[tuple[1]] = [tuple[0]]
+    station_dict = {}
+    for station1, station2 in stations:
+        if station1 not in station_dict:
+            station_dict[station1] = []
+        if station2 not in station_dict:
+            station_dict[station2] = []
+        station_dict[station1].append(station2)
+        station_dict[station2].append(station1)
 
-    ### Get user input for stations - find directions ###
-    startStation = ""
-    endStation = ""
+    start_station = ""
+    end_station = ""
+
     print("\n\n# VELG STASJONER #")
-    print("- Stasjoner: ", str(stationDict.keys()).removeprefix("dict_keys(").removesuffix(")"), " -")
+    print("- Stasjoner: ", list(station_dict.keys()), " -")
 
-    while startStation == "":
-        stationInput = input("Velg startstasjon: ")
-        try:
-            stationDict[stationInput]
-            startStation = stationInput
-        except Exception:
+    while start_station == "":
+        station_input = input("Velg startstasjon: ")
+        if station_input in station_dict:
+            start_station = station_input
+        else:
             print("OBS! Stasjonen eksisterer ikke. Velg på nytt.")
 
-    while endStation == "" or startStation == endStation:
-        stationInput = input("Velg endestasjon: ")
-        try:
-            stationDict[stationInput]
-            endStation = stationInput
-        except Exception:
+    while end_station == "" or start_station == end_station:
+        station_input = input("Velg endestasjon: ")
+        if station_input in station_dict:
+            end_station = station_input
+        else:
             print("OBS! Stasjonen eksisterer ikke. Velg på nytt.")
 
-    withMainDir: int = -1 #1 if you're moving with the main direction, 0 otherwise
-    if endStation == "Trondheim S" or startStation == "Bodø":
-        withMainDir = 0
-    elif endStation == "Bodø" or startStation == "Trondheim S":
-        withMainDir = 1
+    with_main_dir = 0 if end_station == "Trondheim S" or start_station == "Bodø" else 1
 
-    def findIndex() -> int:
-        attemptIndex = 0
-        
-        prevStation: str = startStation
-        while prevStation != endStation:
-            # Checking whether the direction faces Trondheim S
+    def find_index() -> int:
+        prev_station = start_station
+        attempt_index = 0
+        while prev_station != end_station:
             try:
-                nextStation = stationDict[prevStation][attemptIndex]
-                prevStation = nextStation
-            except Exception:
+                next_station = station_dict[prev_station][attempt_index]
+                prev_station = next_station
+            except IndexError:
                 print("Error checking stations")
-            if nextStation == endStation:
-                return attemptIndex
-            if nextStation == "Trondheim S":
+            if next_station == end_station:
+                return attempt_index
+            if next_station == "Trondheim S":
                 return 1
 
-    if withMainDir == -1:
-        withMainDir = findIndex()
-    return startStation, endStation, withMainDir
+    if with_main_dir == -1:
+        with_main_dir = find_index()
+    
+    return start_station, end_station, with_main_dir
 
-### Utilities - find Togrute with direction
-def getTogruteWithDir(connection: sqlite3.Connection,
-                      dir: int) -> list:
+def getTogruteWithDir(connection: sqlite3.Connection, dir: int) -> List[int]:
     cursor = connection.cursor()
-    togruteIDs = []
-    for row in cursor.execute("SELECT ruteID from Togrute WHERE medHovedRetning = ?", (dir,)):
-        togruteIDs.append(row[0])
-    return togruteIDs
+    togrute_ids = cursor.execute(
+        "SELECT ruteID from Togrute WHERE medHovedRetning = ?", (dir,)
+    ).fetchall()
+
+    return [row[0] for row in togrute_ids]
 
 def getTimeString(unixTime: int) -> str:
-    return datetime.datetime.utcfromtimestamp(unixTime).time()
+    return datetime.datetime.utcfromtimestamp(unixTime).time().strftime("%H:%M")
