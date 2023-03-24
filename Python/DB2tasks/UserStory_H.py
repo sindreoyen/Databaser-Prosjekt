@@ -18,7 +18,7 @@ while user == None:
     user = Validators.fetchUser(email=email, connection=connection)
     print("Her er dine fremtidige reiser:")
 
-## Get out data from db
+## Get out data from db about seat orders
 cursor.execute("""SELECT Kundeordre.ordreNR, SetebillettIOrdre.seteNR, Togrute.ruteID, TogruteForekomst.dato, MAX(Delstrekning.delstrekningID) , MIN(Delstrekning.delstrekningID), Togrute.medHovedRetning
 FROM Kundeordre
 NATURAL Join Kunde
@@ -32,6 +32,7 @@ WHERE Kunde.epost = ?
 GROUP BY ordreNR, seteNR""", (email,))
 times = cursor.fetchall()
 
+# Get out data from db about cabin orders 
 cursor.execute("""SELECT Kundeordre.ordreNR, Togrute.ruteID, TogruteForekomst.dato, Togrute.medHovedRetning, kupeNR, sengNR, reiserFra, reiserTil
 FROM Kundeordre
 NATURAL Join Kunde
@@ -48,6 +49,7 @@ kupéBillettInfo = cursor.fetchall()
 #time
 timeNow = int (time.time())
 
+# Function for finding delstrekningID from a stationName
 def findDelstrekningID(stationName, medHovedretning, ruteID):
     query = """SELECT delstrekningID
     FROM Delstrekning
@@ -75,6 +77,7 @@ def findMaxStation(stationID):
     station = cursor.fetchall()
     return station[0][0]
 
+# Function for finding arrivaltime on a selected station
 def findTime(rute_id: int, dato: str, delstrekning_id: int, med_hovedretning: bool, type_stasjon: int) -> int:
     """Find time based on rute ID, date, station ID, direction and station type."""
     query = "SELECT KjørerStrekning.tidStasjon1, KjørerStrekning.tidStasjon2 "
@@ -90,19 +93,16 @@ def findTime(rute_id: int, dato: str, delstrekning_id: int, med_hovedretning: bo
 
 ## Make dict with all orders
 orderDict = {}
+## Add information about seat tickets to orders
 for row in times:
     if row[0] not in orderDict.keys():
         order = []
-        #departureTime = row[1]
-        #arrivalTime = row[0]
         minStationID = row[-2]
         maxStationID = row[-3]
         date = row[-4]
         seats = []
         seats.append(row[1])
         order.append(date)
-        #order.append(departureTime)
-        #order.append(arrivalTime)
         if row[-1] == 1:
             startStation = findMinStation(minStationID)
             endStation = findMaxStation(maxStationID)
@@ -126,6 +126,7 @@ for row in times:
         order[-3].append(row[1])
         orderDict[row[0]] = order
 
+# Add information about cabin tickets to orders
 for row in kupéBillettInfo:
     if row[0] not in orderDict.keys():
         order = []
@@ -145,15 +146,9 @@ for row in kupéBillettInfo:
         delstrekning2 = findDelstrekningID(endStation, not medHovedretning, ruteID)
 
         if medHovedretning:
-            # startStation = findMinStation(delstrekning1)
-            # endStation = findMaxStation(delstrekning2)
-
             departureTime = findTime(ruteID, dato, delstrekning1, medHovedretning, 0)
             arrivalTime = findTime(ruteID, dato, delstrekning2, medHovedretning, 1)
         else:
-            # endStation = findMinStation(delstrekning1)
-            # startStation = findMaxStation(delstrekning2)
-
             departureTime = findTime(ruteID, dato, delstrekning2, medHovedretning, 1)
             arrivalTime = findTime(ruteID, dato, delstrekning1, medHovedretning, 0)
 
@@ -171,7 +166,8 @@ for row in kupéBillettInfo:
         order[-2].append(row[-3])
         order[-1].append(row[-4])
         orderDict[row[0]] = order
-        
+
+# Make output for every order       
 for key in orderDict.keys():
     orderList = orderDict[key]
     avgangsDato = orderList[0]
@@ -188,7 +184,7 @@ for key in orderDict.keys():
     ankomstTid_dt = datetime.datetime.fromtimestamp(ankomstTid + avgangsDato)
 
     # Build result string
-    result = f"Avreise: {avgangsTid_dt} {startStasjon} Ankomst: {ankomstTid_dt.time()} {sluttStasjon}"
+    result = f"Ordrenmmer:{key} Avreise: {avgangsTid_dt} {startStasjon} Ankomst: {ankomstTid_dt.time()} {sluttStasjon}"
     if len(sete) > 0:
         result += f" Sete(r): {sete}"
     if len(seng) > 0:
@@ -196,11 +192,10 @@ for key in orderDict.keys():
     if len(kupe) > 0:
         result += f" i kupé(er): {kupe}"
 
+    # Only print upcomimng orders. Order will be visible until you reach your destination
     if timeNow < ankomstTid + avgangsDato:
         print(result)
-
-        #print("Avreise:", datetime.datetime.fromtimestamp(avgangsTid + avgangsDato), startStasjon, "Ankomst:", datetime.datetime.fromtimestamp(ankomstTid + avgangsDato).time(), sluttStasjon, "Sete(r):", sete)
-#Må fikse at ankomst ved midnatt blir good. 
+ 
 ### Adding changes ###
 connection.commit()
 connection.close()
