@@ -111,12 +111,12 @@ VALUES (5, 'SJ-sovevogn-1');
 
 INSERT INTO "main"."Vognoppsett" ("oppsettID", "antallSovevogner", "antallSittevogner") VALUES ('1', '0', '2');
 INSERT INTO "main"."Vognoppsett" ("oppsettID", "antallSovevogner", "antallSittevogner") VALUES ('2', '1', '1');
-INSERT INTO "main"."Vognoppsett" ("oppsettID", "antallSovevogner", "antallSittevogner") VALUES ('3', '1', '0');
+INSERT INTO "main"."Vognoppsett" ("oppsettID", "antallSovevogner", "antallSittevogner") VALUES ('3', '0', '1');
 
 INSERT INTO "main"."VognIOppsett" ("oppsettID", "vognID", "vognNR") VALUES ('1', '1', '1');
 INSERT INTO "main"."VognIOppsett" ("oppsettID", "vognID", "vognNR") VALUES ('1', '2', '2');
 INSERT INTO "main"."VognIOppsett" ("oppsettID", "vognID", "vognNR") VALUES ('2', '3', '1');
-INSERT INTO "main"."VognIOppsett" ("oppsettID", "vognID", "vognNR") VALUES ('1', '5', '2');
+INSERT INTO "main"."VognIOppsett" ("oppsettID", "vognID", "vognNR") VALUES ('2', '5', '2');
 INSERT INTO "main"."VognIOppsett" ("oppsettID", "vognID", "vognNR") VALUES ('3', '4', '1');
 
 INSERT INTO "main"."Sovekupe"
