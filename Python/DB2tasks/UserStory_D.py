@@ -3,25 +3,21 @@ import datetime
 import LocalData
 import Utilities
 
-### Connecting to database #################
+# Connecting to database
 connection = LocalData.getDBConnection()
 cursor = connection.cursor()
-############################################
 
-res = Utilities.findStationsDirection(connection=connection)
-startStation: str = res[0]
-endStation: str = res[1]
-withMainDir: int = res[2]
+# Get start station, end station and direction
+startStation, endStation, withMainDir = Utilities.findStationsDirection(connection=connection)
 
-### Find all Togrute with this direction
-togruteIDs: list = Utilities.getTogruteWithDir(
-    connection=connection, dir=withMainDir)
+# Find all Togrute with this direction
+togruteIDs = Utilities.getTogruteWithDir(connection=connection, dir=withMainDir)
 
-### Select date and time
+# Select date and time
 valid = False
-date: datetime
 while not valid:
-    timestamp_str = "2023-04-03 07:00" # input("Vennligst skriv inn tid på formatet: 'YYYY-MM-DD hh:mm': ")
+    timestamp_str = input("Vennligst skriv inn tid på formatet: 'YYYY-MM-DD hh:mm': ")  # "2023-04-03 07:00"
+    
     try:
         date = datetime.datetime.strptime(timestamp_str, "%Y-%m-%d %H:%M")
         valid = True
@@ -36,45 +32,48 @@ minDate = (date - datetime.timedelta(hours=date.time().hour, minutes=date.time()
 minTime = minDate.timestamp()
 maxTime = (minDate + datetime.timedelta(days=1)).timestamp()
 
-### Find Togruteforekomst
-forekomster = [] #contains the id's of all Togrute with a Forekomst on the given day
+# Find Togruteforekomst
+forekomster = [] 
 hadResult = False
+trains = []
 
-trains: list = []
 for id in togruteIDs:
     statement = """
     SELECT DATE(Tf.dato, 'unixepoch', 'localtime'), 
     KS.tidStasjon1, 
     KS.tidStasjon2, 
-    Ds.stasjon1, Ds.stasjon2, Tf.navn
+    Ds.stasjon1, 
+    Ds.stasjon2, 
+    Tf.navn
     FROM 
     Togruteforekomst Tf 
     LEFT OUTER NATURAL JOIN KjørerStrekning KS
     LEFT OUTER NATURAL JOIN Delstrekning Ds
-    WHERE Tf.ruteID=?"""
+    WHERE Tf.ruteID=?
+    """
     postfix = ("1" if withMainDir == 1 else "2")
     statement += " AND Ds.stasjon" + postfix + "='" + startStation + "'"
     statement += " AND Tf.dato>=" + str(minTime) + " AND Tf.dato <=" + str(maxTime)
     statement += "\nORDER BY Tf.dato, KS.tidStasjon" + postfix + " DESC"
-    
+
     for row in cursor.execute(statement, (id,)):
-        train: tuple = (str(row[0]), 
-                        Utilities.getTimeString(unixTime=row[1 if withMainDir else 2]), 
-                        str(row[5]))
+        train = (
+            str(row[0]), 
+            Utilities.getTimeString(unixTime=row[1 if withMainDir else 2]), 
+            str(row[5])
+        )
         trains.append(train)
         hadResult = True
 
 if not hadResult:
     print("Beklager, ingen tilgjengelige tog.")
 else:
-    ## Had an error with sqlite3 where the ORDER BY did not work
-    ## made a manual sorting below
-    def sortKey(e: tuple):
-        return e[0]
+    # Sort the trains by date and time
     trains.sort()
+
+    # Print the train schedule
     for train in trains:
         print(train[0] + ": Toget,", train[2], "går fra", startStation, "kl:", train[1])
 
-### Adding changes ###
+# Close database connection
 connection.close()
-######################
