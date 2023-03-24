@@ -1,5 +1,3 @@
-from lib2to3.pgen2.pgen import DFAState
-import sqlite3
 import LocalData
 import Validators
 import datetime
@@ -19,7 +17,7 @@ while user == None:
     print("Her er dine fremtidige reiser:")
 
 ## Get out data from db about seat orders
-cursor.execute("""SELECT Kundeordre.ordreNR, SetebillettIOrdre.seteNR, Togrute.ruteID, TogruteForekomst.dato, MAX(Delstrekning.delstrekningID) , MIN(Delstrekning.delstrekningID), Togrute.medHovedRetning
+cursor.execute("""SELECT Kundeordre.ordreNR, SetebillettIOrdre.seteNR, vognNR, Togrute.ruteID, TogruteForekomst.dato, MAX(Delstrekning.delstrekningID) , MIN(Delstrekning.delstrekningID), Togrute.medHovedRetning
 FROM Kundeordre
 NATURAL Join Kunde
 INNER JOIN TogruteForekomst USING (ruteID, dato)
@@ -27,22 +25,24 @@ NATURAL JOIN Togrute
 NATURAL JOIN BillettIOrdre
 NATURAL JOIN SetebillettIOrdre
 NATURAL JOIN Delstrekning
+NATURAL JOIN VognIOppsett
 NATURAL JOIN KjørerStrekning
 WHERE Kunde.epost = ?
-GROUP BY ordreNR, seteNR""", (email,))
+GROUP BY ordreNR,vognNR, seteNR""", (email,))
 times = cursor.fetchall()
 
 # Get out data from db about cabin orders 
-cursor.execute("""SELECT Kundeordre.ordreNR, Togrute.ruteID, TogruteForekomst.dato, Togrute.medHovedRetning, kupeNR, sengNR, reiserFra, reiserTil
+cursor.execute("""SELECT Kundeordre.ordreNR, Togrute.ruteID, TogruteForekomst.dato, Togrute.medHovedRetning, kupeNR, sengNR, reiserFra, reiserTil, vognNR
 FROM Kundeordre
 NATURAL Join Kunde
 INNER JOIN TogruteForekomst USING (ruteID, dato)
 NATURAL JOIN Togrute
 NATURAL JOIN BillettIOrdre
 NATURAL JOIN HarKupeBillett
+NATURAL JOIN VognIOppsett
 NATURAL JOIN KjørerStrekning
 WHERE Kunde.epost = ? 
-GROUP BY ordreNR, kupeNR, sengNR""", (email,))
+GROUP BY ordreNR, vognNR, kupeNR, sengNR""", (email,))
 
 kupéBillettInfo = cursor.fetchall()
 
@@ -97,12 +97,14 @@ orderDict = {}
 for row in times:
     if row[0] not in orderDict.keys():
         order = []
+        wagonNR = []
         minStationID = row[-2]
         maxStationID = row[-3]
         date = row[-4]
         seats = []
         seats.append(row[1])
         order.append(date)
+        wagonNR.append(row[2])
         if row[-1] == 1:
             startStation = findMinStation(minStationID)
             endStation = findMaxStation(maxStationID)
@@ -120,10 +122,12 @@ for row in times:
         order.append(seats)
         order.append([])
         order.append([])
+        order.append(wagonNR)
         orderDict[row[0]] = order
     else:
         order = orderDict[row[0]]
-        order[-3].append(row[1])
+        order[-4].append(row[1])
+        order[-1].append(row[2])
         orderDict[row[0]] = order
 
 # Add information about cabin tickets to orders
@@ -133,15 +137,17 @@ for row in kupéBillettInfo:
         beds = []
         coupes = []
         seats = []
-        startStation = row[-2]
-        endStation = row[-1]
-        medHovedretning = row[3]
+        wagonNR = []
+        
         ruteID = row[1]
         dato = row[2]
-
-        beds.append(row[-3])
-        coupes.append(row[-4])
-
+        medHovedretning = row[3]
+        coupes.append(row[4])
+        beds.append(row[5])
+        startStation = row[6]
+        endStation = row[7]
+        wagonNR.append(row[8])
+    
         delstrekning1 = findDelstrekningID(startStation, medHovedretning, ruteID)
         delstrekning2 = findDelstrekningID(endStation, not medHovedretning, ruteID)
 
@@ -160,11 +166,13 @@ for row in kupéBillettInfo:
         order.append(seats)
         order.append(beds)
         order.append(coupes)
+        order.append(wagonNR)
         orderDict[row[0]] = order
     else:
         order = orderDict[row[0]]
-        order[-2].append(row[-3])
-        order[-1].append(row[-4])
+        order[-3].append(row[5])
+        order[-2].append(row[4])
+        order[-1].append(row[8])
         orderDict[row[0]] = order
 
 sorted_orderDict = dict(sorted(orderDict.items()))
@@ -180,6 +188,7 @@ for key in sorted_orderDict.keys():
     sete = orderList[5]
     seng = orderList[6]
     kupe = orderList[7]
+    vognNR = orderList[8]
 
     # Convert timestamps to datetime objects
     avgangsTid_dt = datetime.datetime.fromtimestamp(avgangsTid + avgangsDato)
@@ -193,6 +202,8 @@ for key in sorted_orderDict.keys():
         result += f" Seng(er): {seng}"
     if len(kupe) > 0:
         result += f" i kupé(er): {kupe}"
+    if len(wagonNR) > 0:
+        result += f" i vogn(ene): {vognNR}"
 
     # Only print upcomimng orders. Order will be visible until you reach your destination
     if timeNow < ankomstTid + avgangsDato:
