@@ -91,6 +91,8 @@ for key in orderDict.keys():
     startStasjon = orderList[3]
     sluttStasjon = orderList[4]
     sete = orderList[5]
+    print(ankomstTid)
+    print(avgangsTid)
     if timeNow < ankomstTid + avgangsDato:
         print("Avreise: ", datetime.datetime.fromtimestamp(avgangsTid + avgangsDato), startStasjon, "Ankomst:", datetime.datetime.fromtimestamp(ankomstTid + avgangsDato), sluttStasjon, "Sete(r):", sete)
 #Må fikse at ankomst ved midnatt blir good. 
