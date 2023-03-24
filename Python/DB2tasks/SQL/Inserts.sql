@@ -235,11 +235,11 @@ VALUES (1, 1, 28140, 35460);
 
 INSERT INTO "main"."KjørerStrekning"
 ("ruteID", "delstrekningID", "tidStasjon1", "tidStasjon2")
-VALUES (1, 2, 35460, 45060);
+VALUES (1, 2, 35460, 44400);
 
 INSERT INTO "main"."KjørerStrekning"
 ("ruteID", "delstrekningID", "tidStasjon1", "tidStasjon2")
-VALUES (1, 3, 45060, 52260);
+VALUES (1, 3, 44400, 52260);
 
 INSERT INTO "main"."KjørerStrekning"
 ("ruteID", "delstrekningID", "tidStasjon1", "tidStasjon2")
@@ -271,11 +271,11 @@ VALUES (2, 5, 29940, 32700);
 
 INSERT INTO "main"."KjørerStrekning"
 ("ruteID", "delstrekningID", "tidStasjon1", "tidStasjon2")
-VALUES (3, 1, 51180, 44400);
+VALUES (3, 1, 51180, 45060);
 
 INSERT INTO "main"."KjørerStrekning"
 ("ruteID", "delstrekningID", "tidStasjon1", "tidStasjon2")
-VALUES (3, 2, 44400, 33240);
+VALUES (3, 2, 45060, 33240);
 
 INSERT INTO "main"."KjørerStrekning"
 ("ruteID", "delstrekningID", "tidStasjon1", "tidStasjon2")
