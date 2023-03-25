@@ -9,6 +9,12 @@ connection = LocalData.getDBConnection()
 cursor = connection.cursor()
 ############################################
 
+## Check if any users exist in db
+cursor.execute("SELECT * FROM Kunde")
+if cursor.fetchone() == None:
+    print("Ingen brukere er registrert i databasen. Du må registrere en bruker først i brukerhistorie E.")
+    exit()
+
 user: tuple = None
 while user == None:
     email = input("Hei! Vennligst skriv eposten til brukeren du er registrert med: ")
