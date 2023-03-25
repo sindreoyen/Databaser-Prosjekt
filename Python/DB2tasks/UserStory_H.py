@@ -9,14 +9,14 @@ cursor = connection.cursor()
 ############################################
 
 
-##Validate if epost exist in db
+## Validate if epost exist in db
 user: tuple = None
 while user == None:
     email = input("Hei! Vennligst skriv eposten til brukeren du ønsker å sjekke reiser for: ")
     user = Validators.fetchUser(email=email, connection=connection)
     print("Her er dine fremtidige reiser:")
 
-## Get out data from db about seat orders
+## Extracting data from db about seat orders
 cursor.execute("""SELECT Kundeordre.ordreNR, SetebillettIOrdre.seteNR, vognNR, Togrute.ruteID, TogruteForekomst.dato, MAX(Delstrekning.delstrekningID) , MIN(Delstrekning.delstrekningID), Togrute.medHovedRetning
 FROM Kundeordre
 NATURAL Join Kunde
@@ -29,9 +29,9 @@ NATURAL JOIN VognIOppsett
 NATURAL JOIN KjørerStrekning
 WHERE Kunde.epost = ?
 GROUP BY ordreNR,vognNR, seteNR""", (email,))
-times = cursor.fetchall()
+seteBillettInfo = cursor.fetchall()
 
-# Get out data from db about cabin orders 
+# Extracting data from db about cabin orders 
 cursor.execute("""SELECT Kundeordre.ordreNR, Togrute.ruteID, TogruteForekomst.dato, Togrute.medHovedRetning, kupeNR, sengNR, reiserFra, reiserTil, vognNR
 FROM Kundeordre
 NATURAL Join Kunde
@@ -49,7 +49,7 @@ kupéBillettInfo = cursor.fetchall()
 #time
 timeNow = int (time.time())
 
-# Function for finding delstrekningID from a stationName
+# Function for finding the correct delstrekningID from a stationName and routeID
 def findDelstrekningID(stationName, medHovedretning, ruteID):
     query = """SELECT delstrekningID
     FROM Delstrekning
@@ -62,7 +62,7 @@ def findDelstrekningID(stationName, medHovedretning, ruteID):
     return cursor.fetchall()[0][0]
 
 
-# Functions for finding station
+# Functions for finding the correct station
 def findMinStation(stationID):
     cursor.execute("""SELECT Delstrekning.stasjon1 
     FROM Delstrekning
@@ -77,9 +77,9 @@ def findMaxStation(stationID):
     station = cursor.fetchall()
     return station[0][0]
 
-# Function for finding arrivaltime on a selected station
+# Function for finding the correct arrival/departure time for a selected station
 def findTime(rute_id: int, dato: str, delstrekning_id: int, med_hovedretning: bool, type_stasjon: int) -> int:
-    """Find time based on rute ID, date, station ID, direction and station type."""
+    """Find time based on ruteID, date, stationID, direction and station type."""
     query = "SELECT KjørerStrekning.tidStasjon1, KjørerStrekning.tidStasjon2 "
     query += "FROM TogruteForekomst NATURAL JOIN KjørerStrekning "
     query += "WHERE ruteID = ? AND dato = ? AND delstrekningID = ?"
@@ -91,10 +91,11 @@ def findTime(rute_id: int, dato: str, delstrekning_id: int, med_hovedretning: bo
     else:
         return result[1 - type_stasjon]
 
-## Make dict with all orders
+## Making a dict for all orders
 orderDict = {}
-## Add information about seat tickets to orders
-for row in times:
+
+## Adding information about seat tickets to orders
+for row in seteBillettInfo:
     if row[0] not in orderDict.keys():
         order = []
         wagonNR = []
@@ -194,6 +195,8 @@ for key in sorted_orderDict.keys():
     avgangsTid_dt = datetime.datetime.fromtimestamp(avgangsTid + avgangsDato)
     ankomstTid_dt = datetime.datetime.fromtimestamp(ankomstTid + avgangsDato)
 
+    # The following code is mainly string formatting for presenting the tickets to the user 
+
     # Build result string
     result = f"Ordrenmmer: {key} \n Avreisedato: {avgangsTid_dt.date()} \n Avgang: {avgangsTid_dt.time()} {startStasjon} \n Ankomst: {ankomstTid_dt.time()} {sluttStasjon}"
 
@@ -211,20 +214,22 @@ for key in sorted_orderDict.keys():
         for i in range(len(vognNR)):
 
             # Adding seats with vognNR as key if they are not in the seat dictionary
-
             if vognNR[i] not in seatdict:
+
+                # Validating that there are elements in the sete list
                 if len(sete) > 0:
                     seatdict[vognNR[i]] = [sete[i]]
 
             # Adding seats to the list if there are more seats in the same wagon
-
             else:
+                 # Validating that there are elements in the sete list
                 if len(sete) > 0:
                     seatdict[vognNR[i]].append(sete[i])
 
             # Doing the same, but this time for cabins and beds
             if vognNR[i] not in ticketdict:
-    
+                
+                # Validating that there are elements in both kupe and seng lists
                 if len(kupe) > 0 and len(seng) > 0:
                     cabindict = {}
                     cabindict[kupe[i]] = [seng[i]]
@@ -233,6 +238,8 @@ for key in sorted_orderDict.keys():
                     ticketdict[vognNR[i]] = [seng[i]]
 
             else:
+
+                # Validating that there are elements in both kupe and seng lists
                 if len(kupe) > 0 and len(seng) > 0:
                     if kupe[i] not in ticketdict[vognNR[i]]:
                         ticketdict[vognNR[i]][kupe[i]] = [seng[i]]
