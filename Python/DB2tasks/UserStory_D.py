@@ -54,7 +54,7 @@ for id in togruteIDs:
     postfix = ("1" if withMainDir == 1 else "2")
     statement += " AND Ds.stasjon" + postfix + "='" + startStation + "'"
     statement += " AND Tf.dato>=" + str(minTime) + " AND Tf.dato <=" + str(maxTime)
-    statement += "\nORDER BY Tf.dato, KS.tidStasjon" + postfix + " DESC"
+    statement += "\nORDER BY Tf.dato, KS.tidStasjon" + postfix
 
     for row in cursor.execute(statement, (id,)):
         train = (
@@ -68,7 +68,7 @@ for id in togruteIDs:
 if not hadResult:
     print("Beklager, ingen tilgjengelige tog.")
 else:
-    # Sort the trains by date and time
+    # Sort the trains by date and time, using python for multiple keys
     trains.sort()
 
     # Print the train schedule
