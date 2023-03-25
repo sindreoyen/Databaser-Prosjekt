@@ -16,6 +16,24 @@ while user == None:
     user = Validators.fetchUser(email=email, connection=connection)
     print("Her er dine fremtidige reiser:")
 
+## User input for time and date, so that the code can be ran at any time
+
+valid = False
+while not valid:
+    timestamp_str = input("Vennligst skriv inn tid på formatet: 'YYYY-MM-DD hh:mm': ")  # "2023-04-03 07:00"
+    
+    try:
+        userTime = datetime.datetime.strptime(timestamp_str, "%Y-%m-%d %H:%M")
+        valid = True
+    except ValueError:
+        print("Formatet ble ikke korrekt. Vennligst prøv igjen.")
+
+timeNow = int(userTime.timestamp())
+testTime = int(time.time())
+
+print(timeNow)
+print(testTime)
+
 ## Extracting data from db about seat orders
 cursor.execute("""SELECT Kundeordre.ordreNR, SetebillettIOrdre.seteNR, vognNR, Togrute.ruteID, TogruteForekomst.dato, MAX(Delstrekning.delstrekningID) , MIN(Delstrekning.delstrekningID), Togrute.medHovedRetning
 FROM Kundeordre
@@ -45,9 +63,6 @@ WHERE Kunde.epost = ?
 GROUP BY ordreNR, vognNR, kupeNR, sengNR""", (email,))
 
 kupéBillettInfo = cursor.fetchall()
-
-#time
-timeNow = int (time.time())
 
 # Function for finding the correct delstrekningID from a stationName and routeID
 def findDelstrekningID(stationName, medHovedretning, ruteID):
