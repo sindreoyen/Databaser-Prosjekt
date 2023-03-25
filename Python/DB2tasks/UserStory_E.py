@@ -13,8 +13,10 @@ while navn == "":
     navn = input("Skriv inn navnet ditt: ")
 while epost == "" and '@' not in epost:
     epost = input("Skriv inn din epost: ")
-while mobilnr == "":
-    mobilnr = input("Skriv inn ditt mobilnummer: ")
+while mobilnr == "" and len(mobilnr) != 8:
+    mob: str = input("Skriv inn ditt mobilnummer: ")
+    try: mobilnr = int(mob)
+    except: print("Mobilnummeret må være et tall.")
 
 try:
     cursor.execute("""INSERT INTO Kunde
