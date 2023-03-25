@@ -4,6 +4,7 @@ import pathlib
 
 ### Data
 path: str = str(pathlib.Path(__file__).parent.resolve())
+sep: str = pathlib.os.sep
 
 ## DB name
 dbName = "tog_db.db"
@@ -41,7 +42,9 @@ def __fillDB(connection: sqlite3.connect) -> sqlite3.Connection:
     return connection
 
 def __execScript(sqlite_file: str, connection: sqlite3.Connection):
-    prefix: str = path + "/SQL/"
+    # Get path to SQL directory cross platform
+    prefix: str = path + sep + "SQL" + sep
+
     with open(prefix + sqlite_file, 'r') as sql_file:
         sql_script = sql_file.read()
 
