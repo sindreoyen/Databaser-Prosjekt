@@ -195,15 +195,48 @@ for key in sorted_orderDict.keys():
     ankomstTid_dt = datetime.datetime.fromtimestamp(ankomstTid + avgangsDato)
 
     # Build result string
-    result = f"Ordrenmmer:{key} Avreise: {avgangsTid_dt} {startStasjon} Ankomst: {ankomstTid_dt.time()} {sluttStasjon}"
-    if len(sete) > 0:
-        result += f" Sete(r): {sete}"
-    if len(seng) > 0:
-        result += f" Seng(er): {seng}"
-    if len(kupe) > 0:
-        result += f" i kupé(er): {kupe}"
-    if len(wagonNR) > 0:
-        result += f" i vogn(ene): {vognNR}"
+    result = f"Ordrenmmer: {key} \n Avreisedato: {avgangsTid_dt.date()} \n Avgang: {avgangsTid_dt.time()} {startStasjon} \n Ankomst: {ankomstTid_dt.time()} {sluttStasjon}"
+
+    # Make dictionarys for presenting seats and cabins with beds to the user in correct wagon
+    ticketdict = {}
+    seatdict = {}
+
+
+    # Statements for adding the correct seats, cabins and beds to their respective wagon
+
+    if len(vognNR) > 0:
+        for i in range(len(vognNR)):
+            if vognNR[i] not in seatdict:
+                if len(sete) > 0:
+                    seatdict[vognNR[i]] = [sete[i]]
+            else:
+                if len(sete) > 0:
+                    seatdict[vognNR[i]].append(sete[i])
+
+            if vognNR[i] not in ticketdict:
+    
+                if len(kupe) > 0 and len(seng) > 0:
+                    cabindict = {}
+                    cabindict[kupe[i]] = [seng[i]]
+                    ticketdict[vognNR[i]] = cabindict
+                elif len(seng) > 0:
+                    ticketdict[vognNR[i]] = [seng[i]]
+
+            else:
+                if len(kupe) > 0 and len(seng) > 0:
+                    if kupe[i] not in ticketdict[vognNR[i]]:
+                        ticketdict[vognNR[i]][kupe[i]] = [seng[i]]
+                    else:
+                        ticketdict[vognNR[i]][kupe[i]].append(seng[i])
+    
+    # Adding the ordered tickets to the result string
+    for key in seatdict:
+        result += f"\n Sete(r): {seatdict[key]} i vogn {key}"
+    
+    for wagon in ticketdict:
+        for cabin in ticketdict[wagon]:
+            result += f"\n Seng(er): {ticketdict[wagon][cabin]}, i kupé {cabin}, vogn {wagon}"
+
 
     # Only print upcomimng orders. Order will be visible until you reach your destination
     if timeNow < ankomstTid + avgangsDato:
