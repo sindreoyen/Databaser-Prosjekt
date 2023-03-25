@@ -65,6 +65,7 @@ def findStationsDirection(connection: sqlite3.Connection) -> Tuple[str, str, int
     return start_station, end_station, with_main_dir
 
 def getTogruteWithDir(connection: sqlite3.Connection, dir: int) -> List[int]:
+    """Gets all togrute ids with the given direction"""
     cursor = connection.cursor()
     togrute_ids = cursor.execute(
         "SELECT ruteID from Togrute WHERE medHovedRetning = ?", (dir,)
@@ -73,4 +74,5 @@ def getTogruteWithDir(connection: sqlite3.Connection, dir: int) -> List[int]:
     return [row[0] for row in togrute_ids]
 
 def getTimeString(unixTime: int) -> str:
+    """Returns a string of the time from a unix timestamp"""
     return datetime.datetime.utcfromtimestamp(unixTime).time().strftime("%H:%M")

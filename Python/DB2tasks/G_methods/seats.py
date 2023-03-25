@@ -4,6 +4,7 @@ import datetime
 def orderSeat(connection: sqlite3.Connection, ids: list,
               startStation: str, endStation: str, 
               withMainDir: int, customerID: int):
+    """Orders a seat for a customer"""
     cursor = connection.cursor()
 
     ## Find available trains
@@ -116,6 +117,7 @@ def orderSeat(connection: sqlite3.Connection, ids: list,
 def createPurchase(delstrekningIDs: list, chosenCartSeats: dict, customerID: int,
                    connection: sqlite3.Connection, 
                    forekomst: tuple):
+    """Creates a purchase in the database, and adds the tickets to the purchase."""
     cursor = connection.cursor()
     timestamp = int(datetime.datetime.now().timestamp())
     print("Legger inn din bestilling...")

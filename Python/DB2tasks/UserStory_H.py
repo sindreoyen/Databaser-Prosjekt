@@ -62,6 +62,7 @@ kupéBillettInfo = cursor.fetchall()
 
 ## Function for finding the correct delstrekningID from a stationName and routeID
 def findDelstrekningID(stationName, medHovedretning, ruteID):
+    """Returns the delstrekningID for a given stationName and routeID"""
     query = """SELECT delstrekningID
     FROM Delstrekning
     NATURAL JOIN KjørerStrekning """
@@ -75,6 +76,7 @@ def findDelstrekningID(stationName, medHovedretning, ruteID):
 
 ## Functions for finding the correct station
 def findMinStation(stationID):
+    """Returns the stationName for a given delstrekningID"""
     cursor.execute("""SELECT Delstrekning.stasjon1 
     FROM Delstrekning
     WHERE delstrekningID = ?""",(stationID,))
@@ -82,6 +84,7 @@ def findMinStation(stationID):
     return station[0][0]
 
 def findMaxStation(stationID):
+    """Returns the stationName for a given delstrekningID"""
     cursor.execute("""SELECT Delstrekning.stasjon2 
     FROM Delstrekning
     WHERE delstrekningID = ?""",(stationID,))
@@ -90,8 +93,7 @@ def findMaxStation(stationID):
 
 ## Function for finding the correct arrival/departure time for a selected station
 def findTime(ruteID: int, dato: str, delstrekningID: int, medHovedretning: bool, typeStasjon: int) -> int:
-
-    ## Building SQL query to retrieve time for specified parameters
+    """Returns the arrival/departure time for a given station, route, date and direction"""
     query = "SELECT KjørerStrekning.tidStasjon1, KjørerStrekning.tidStasjon2 "
     query += "FROM TogruteForekomst NATURAL JOIN KjørerStrekning "
     query += "WHERE ruteID = ? AND dato = ? AND delstrekningID = ?"

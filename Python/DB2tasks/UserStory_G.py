@@ -20,14 +20,12 @@ while user == None:
     email = input("Hei! Vennligst skriv eposten til brukeren du er registrert med: ")
     user = Validators.fetchUser(email=email, connection=connection)
 
-def orderCoupe():
-    print("Coupe")
 options = ["k", "s"]
-
 choice = ""
 while choice.lower() not in options:
     choice = input("Vennligst skriv inn K dersom du ønsker sovekupé, eller S dersom du ønsker et sete\n[K / S]: ")
 
+### Order seats or coupes
 if choice.lower() == "s":
     res = Utilities.findStationsDirection(connection=connection)
     ids = Utilities.getTogruteWithDir(connection=connection, dir=res[2])
