@@ -45,16 +45,21 @@ def orderSeat(connection: sqlite3.Connection, ids: list,
     delstrekningIDs: list = fetchDelstrekningIDs(connection=connection,
                                            startStation=startStation, endStation=endStation,
                                            togruteID=selected[0], dir=withMainDir)
-    statement = """
+    
+    ## Had to use f-strings to get the list of delstrekningIDs to work
+    ## Finds all available seats for the chosen trainride
+    statement = f"""
     SELECT Sete.seteNR, VognIOppsett.vognNR, ds.delstrekningID
     FROM
     Sete LEFT OUTER NATURAL JOIN
-    Vogn LEFT NATURAL JOIN 
-    VognIOppsett NATURAL JOIN
-    VognOppsett LEFT OUTER NATURAL JOIN
-    Togrute LEFT OUTER NATURAL JOIN
-    TogruteForekomst Tf LEFT OUTER NATURAL JOIN
-    Delstrekning ds LEFT OUTER NATURAL JOIN SetebillettIOrdre so
+    Vogn LEFT OUTER NATURAL JOIN 
+    VognIOppsett LEFT OUTER NATURAL JOIN
+    VognOppsett LEFT NATURAL JOIN
+    Togrute LEFT NATURAL JOIN
+    TogruteForekomst Tf LEFT JOIN
+    (SELECT * FROM Delstrekning WHERE delstrekningID IN ({str(delstrekningIDs)[1:-1]})) ds
+    LEFT OUTER JOIN KundeOrdre ko ON ko.dato=Tf.dato AND ko.ruteID=Tf.ruteID
+    LEFT OUTER NATURAL JOIN SetebillettIOrdre so
     WHERE Tf.ruteID=? AND Tf.navn=? AND Tf.dato=? AND so.billettID IS NULL
     ORDER BY Tf.dato, Sete.seteNR, VognIOppsett.vognNR ASC
     """
