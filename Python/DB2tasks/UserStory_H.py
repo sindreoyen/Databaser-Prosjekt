@@ -41,7 +41,8 @@ NATURAL JOIN Delstrekning
 NATURAL JOIN VognIOppsett
 NATURAL JOIN KjørerStrekning
 WHERE Kunde.epost = ?
-GROUP BY ordreNR,vognNR, seteNR""", (email,))
+GROUP BY ordreNR,vognNR, seteNR
+ORDER BY ordreNR""", (email,))
 seteBillettInfo = cursor.fetchall()
 
 # Extracting data from db about cabin orders 
@@ -55,7 +56,8 @@ NATURAL JOIN HarKupeBillett
 NATURAL JOIN VognIOppsett
 NATURAL JOIN KjørerStrekning
 WHERE Kunde.epost = ? 
-GROUP BY ordreNR, vognNR, kupeNR, sengNR""", (email,))
+GROUP BY ordreNR, vognNR, kupeNR, sengNR
+ORDER BY ordreNR""", (email,))
 
 kupéBillettInfo = cursor.fetchall()
 
