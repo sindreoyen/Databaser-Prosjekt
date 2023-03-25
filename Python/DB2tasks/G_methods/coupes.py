@@ -95,7 +95,7 @@ def orderCoupe(connection: sqlite3.Connection, ids: list,
             coupesMap.pop(coupe)
         mylist: list = []
         print("Du har lagt til seng", bed, "i kupé", coupe, "til din bestilling.")
-        ordering = input("Skriv 'y' dersom du ønsker å legge til flere seter, trykk enter for å gå videre: ")
+        ordering = input("Skriv 'y' dersom du ønsker å legge til flere senger, trykk enter for å gå videre: ")
         try: chosenCoupeBed[coupe].append(bed)
         except: chosenCoupeBed[coupe] = [bed]
     createPurchase(chosenCoupeBeds=chosenCoupeBed, customerID=customerID,
