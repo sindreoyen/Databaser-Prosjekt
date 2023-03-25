@@ -49,7 +49,7 @@ def orderSeat(connection: sqlite3.Connection, ids: list,
     
     ## Had to use f-strings to get the list of delstrekningIDs to work
     ## Finds all available seats for the chosen trainride
-    statement = f"""
+    statement = """
     SELECT Sete.seteNR, VognIOppsett.vognNR, ds.delstrekningID
     FROM
     Sete LEFT OUTER NATURAL JOIN
@@ -58,10 +58,11 @@ def orderSeat(connection: sqlite3.Connection, ids: list,
     VognOppsett LEFT NATURAL JOIN
     Togrute LEFT NATURAL JOIN
     TogruteForekomst Tf LEFT JOIN
-    (SELECT * FROM Delstrekning WHERE delstrekningID IN ({str(delstrekningIDs)[1:-1]})) ds
-    LEFT OUTER JOIN KundeOrdre ko ON ko.dato=Tf.dato AND ko.ruteID=Tf.ruteID
-    LEFT OUTER NATURAL JOIN SetebillettIOrdre so
-    WHERE Tf.ruteID=? AND Tf.navn=? AND Tf.dato=? AND so.billettID IS NULL
+    Delstrekning ds
+	LEFT JOIN KundeOrdre ko ON ko.dato=Tf.dato AND ko.ruteID=Tf.ruteID
+    LEFT JOIN SetebillettIOrdre so ON so.ordreNR=ko.ordreNR
+	WHERE Tf.ruteID=? AND Tf.navn=? AND Tf.dato=? AND so.ordreNR IS NULL
+	GROUP BY sete.seteNR, VognIOppsett.vognNR, ds.delstrekningID
     ORDER BY Tf.dato, Sete.seteNR, VognIOppsett.vognNR ASC
     """
     allSeatsMap: dict = {}
