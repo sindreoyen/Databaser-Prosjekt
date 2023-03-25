@@ -16,10 +16,9 @@ while user == None:
     print("Her er dine fremtidige reiser:")
 
 ## User input for time and date, so that the code can be ran at any time
-
 valid = False
 while not valid:
-    timestamp_str = input("Vennligst skriv inn tid på formatet: 'YYYY-MM-DD hh:mm': ")  # "2023-04-03 07:00"
+    timestamp_str = input("Vennligst skriv inn tid på formatet: 'YYYY-MM-DD hh:mm': ") 
     
     try:
         userTime = datetime.datetime.strptime(timestamp_str, "%Y-%m-%d %H:%M")
@@ -45,7 +44,7 @@ GROUP BY ordreNR,vognNR, seteNR
 ORDER BY ordreNR""", (email,))
 seteBillettInfo = cursor.fetchall()
 
-# Extracting data from db about cabin orders 
+## Extracting data from db about cabin orders 
 cursor.execute("""SELECT Kundeordre.ordreNR, Togrute.ruteID, TogruteForekomst.dato, Togrute.medHovedRetning, kupeNR, sengNR, reiserFra, reiserTil, vognNR
 FROM Kundeordre
 NATURAL Join Kunde
@@ -61,7 +60,7 @@ ORDER BY ordreNR""", (email,))
 
 kupéBillettInfo = cursor.fetchall()
 
-# Function for finding the correct delstrekningID from a stationName and routeID
+## Function for finding the correct delstrekningID from a stationName and routeID
 def findDelstrekningID(stationName, medHovedretning, ruteID):
     query = """SELECT delstrekningID
     FROM Delstrekning
@@ -74,7 +73,7 @@ def findDelstrekningID(stationName, medHovedretning, ruteID):
     return cursor.fetchall()[0][0]
 
 
-# Functions for finding the correct station
+## Functions for finding the correct station
 def findMinStation(stationID):
     cursor.execute("""SELECT Delstrekning.stasjon1 
     FROM Delstrekning
@@ -89,10 +88,10 @@ def findMaxStation(stationID):
     station = cursor.fetchall()
     return station[0][0]
 
-# Function for finding the correct arrival/departure time for a selected station
+## Function for finding the correct arrival/departure time for a selected station
 def findTime(ruteID: int, dato: str, delstrekningID: int, medHovedretning: bool, typeStasjon: int) -> int:
 
-    # Building SQL query to retrieve time for specified parameters
+    ## Building SQL query to retrieve time for specified parameters
     query = "SELECT KjørerStrekning.tidStasjon1, KjørerStrekning.tidStasjon2 "
     query += "FROM TogruteForekomst NATURAL JOIN KjørerStrekning "
     query += "WHERE ruteID = ? AND dato = ? AND delstrekningID = ?"
@@ -149,7 +148,7 @@ for row in seteBillettInfo:
         order[-1].append(row[2])
         orderDict[row[0]] = order
 
-# Add information about cabin tickets to orders
+## Add information about cabin tickets to orders
 for row in kupéBillettInfo:
     if row[0] not in orderDict.keys():
         order = []
@@ -196,7 +195,7 @@ for row in kupéBillettInfo:
 
 sorted_orderDict = dict(sorted(orderDict.items()))
 
-# Make output for every order       
+## Make output for every order       
 for key in sorted_orderDict.keys():
     orderList = orderDict[key]
     avgangsDato = orderList[0]
@@ -213,7 +212,7 @@ for key in sorted_orderDict.keys():
     avgangsTid_dt = datetime.datetime.fromtimestamp(avgangsTid + avgangsDato)
     ankomstTid_dt = datetime.datetime.fromtimestamp(ankomstTid + avgangsDato)
 
-    # The following code is mainly string formatting for presenting the tickets to the user 
+    ## The following code is mainly string formatting for presenting the tickets to the user 
 
     # Build result string
     result = f"Ordrenmmer: {key} \n Avreisedato: {avgangsTid_dt.date()} \n Avgang: {avgangsTid_dt.time()} {startStasjon} \n Ankomst: {ankomstTid_dt.time()} {sluttStasjon}"
@@ -223,7 +222,7 @@ for key in sorted_orderDict.keys():
     seatdict = {}
 
 
-    # Statements for adding the correct seats, cabins and beds to their respective wagon
+    ## Statements for adding the correct seats, cabins and beds to their respective wagon
 
     # Only running if there are tickets in any wagons
     if len(vognNR) > 0:
@@ -264,7 +263,7 @@ for key in sorted_orderDict.keys():
                     else:
                         ticketdict[vognNR[i]][kupe[i]].append(seng[i])
     
-    # Adding the ordered tickets to the result string
+    ## Adding the ordered tickets to the result string
     for key in seatdict:
         result += f"\n Sete(r): {seatdict[key]} i vogn {key}"
     
