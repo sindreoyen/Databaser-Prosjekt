@@ -135,14 +135,14 @@ for row in kupéBillettInfo:
     if row[0] not in orderDict.keys():
         order = []
         beds = []
-        coupes = []
+        cabins = []
         seats = []
         wagonNR = []
         
         ruteID = row[1]
         dato = row[2]
         medHovedretning = row[3]
-        coupes.append(row[4])
+        cabins.append(row[4])
         beds.append(row[5])
         startStation = row[6]
         endStation = row[7]
@@ -165,7 +165,7 @@ for row in kupéBillettInfo:
         order.append(endStation)
         order.append(seats)
         order.append(beds)
-        order.append(coupes)
+        order.append(cabins)
         order.append(wagonNR)
         orderDict[row[0]] = order
     else:
@@ -204,15 +204,25 @@ for key in sorted_orderDict.keys():
 
     # Statements for adding the correct seats, cabins and beds to their respective wagon
 
+    # Only running if there are tickets in any wagons
     if len(vognNR) > 0:
+
+        # Looping through the wagons
         for i in range(len(vognNR)):
+
+            # Adding seats with vognNR as key if they are not in the seat dictionary
+
             if vognNR[i] not in seatdict:
                 if len(sete) > 0:
                     seatdict[vognNR[i]] = [sete[i]]
+
+            # Adding seats to the list if there are more seats in the same wagon
+
             else:
                 if len(sete) > 0:
                     seatdict[vognNR[i]].append(sete[i])
 
+            # Doing the same, but this time for cabins and beds
             if vognNR[i] not in ticketdict:
     
                 if len(kupe) > 0 and len(seng) > 0:
