@@ -1,7 +1,6 @@
 import LocalData
 import Validators
 import datetime
-import time
 
 ### Connecting to database #################
 connection = LocalData.getDBConnection()
@@ -29,10 +28,6 @@ while not valid:
         print("Formatet ble ikke korrekt. Vennligst prøv igjen.")
 
 timeNow = int(userTime.timestamp())
-testTime = int(time.time())
-
-print(timeNow)
-print(testTime)
 
 ## Extracting data from db about seat orders
 cursor.execute("""SELECT Kundeordre.ordreNR, SetebillettIOrdre.seteNR, vognNR, Togrute.ruteID, TogruteForekomst.dato, MAX(Delstrekning.delstrekningID) , MIN(Delstrekning.delstrekningID), Togrute.medHovedRetning
@@ -93,18 +88,24 @@ def findMaxStation(stationID):
     return station[0][0]
 
 # Function for finding the correct arrival/departure time for a selected station
-def findTime(rute_id: int, dato: str, delstrekning_id: int, med_hovedretning: bool, type_stasjon: int) -> int:
-    """Find time based on ruteID, date, stationID, direction and station type."""
+def findTime(ruteID: int, dato: str, delstrekningID: int, medHovedretning: bool, typeStasjon: int) -> int:
+
+    # Building SQL query to retrieve time for specified parameters
     query = "SELECT KjørerStrekning.tidStasjon1, KjørerStrekning.tidStasjon2 "
     query += "FROM TogruteForekomst NATURAL JOIN KjørerStrekning "
     query += "WHERE ruteID = ? AND dato = ? AND delstrekningID = ?"
-    cursor.execute(query, (rute_id, dato, delstrekning_id,))
+    cursor.execute(query, (ruteID, dato, delstrekningID,))
     result = cursor.fetchall()[0]
 
-    if med_hovedretning:
-        return result[type_stasjon]
+    # Decide which time to return based on medHovedretning and typeStasjon parameters
+    if medHovedretning:
+
+        # Return arrival time if medHovedretning is True and typeStasjon is 0 or departure time if typeStasjon is 1
+        return result[typeStasjon]
     else:
-        return result[1 - type_stasjon]
+
+         # Return departure time if medHovedretning is False and typeStasjon is 0 or arrival time if typeStasjon is 1
+        return result[1 - typeStasjon]
 
 ## Making a dict for all orders
 orderDict = {}
