@@ -18,7 +18,7 @@ while runScript.capitalize() not in available:
 
 ### Run script
 try:
-    path = DB2tasks.LocalData.path + "/UserStory_" + runScript.capitalize() + ".py"
+    path = DB2tasks.LocalData.path + DB2tasks.LocalData.sep + "UserStory_" + runScript.capitalize() + ".py"
     print(path)
     subprocess.run(["python", path])
 except Exception:
