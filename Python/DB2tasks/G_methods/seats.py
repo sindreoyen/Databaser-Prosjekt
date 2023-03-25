@@ -50,19 +50,41 @@ def orderSeat(connection: sqlite3.Connection, ids: list,
     ## Had to use f-strings to get the list of delstrekningIDs to work
     ## Finds all available seats for the chosen trainride
     statement = """
-    SELECT Sete.seteNR, vo.vognNR, ds.delstrekningID, Tf.dato
+    SELECT 
+        Sete.seteNR, 
+        vo.vognNR, 
+        ds.delstrekningID, 
+        Tf.dato
     FROM
-    Sete LEFT OUTER NATURAL JOIN
-    Vogn LEFT NATURAL JOIN 
-    VognIOppsett vo LEFT OUTER JOIN
-    Togrute ON vo.oppsettID = Togrute.oppsettID LEFT OUTER NATURAL JOIN
-    TogruteForekomst Tf LEFT OUTER NATURAL JOIN
-    Delstrekning ds LEFT JOIN 
-    (SELECT ko.dato, so.billettID, so.delstrekningID, so.seteNR, so.vognID FROM
-    SetebillettIOrdre so LEFT OUTER NATURAL JOIN Kundeordre ko) billett
-    ON Tf.dato = billett.dato AND billett.seteNR = Sete.seteNR AND vogn.vognID = billett.vognID AND billett.delstrekningID = ds.delstrekningID
-    WHERE Tf.ruteID=? AND Tf.navn=? AND Tf.dato=? AND billett.billettID IS NULL
-    ORDER BY Tf.dato, Sete.seteNR, vo.vognNR ASC
+        Sete 
+        LEFT OUTER NATURAL JOIN Vogn 
+        LEFT NATURAL JOIN VognIOppsett vo 
+            LEFT OUTER JOIN Togrute ON vo.oppsettID = Togrute.oppsettID 
+        LEFT OUTER NATURAL JOIN TogruteForekomst Tf 
+            LEFT OUTER NATURAL JOIN Delstrekning ds 
+                LEFT JOIN (
+                    SELECT 
+                        ko.dato, 
+                        so.billettID, 
+                        so.delstrekningID, 
+                        so.seteNR, 
+                        so.vognID 
+                    FROM SetebillettIOrdre so 
+                    LEFT OUTER NATURAL JOIN Kundeordre ko
+                ) billett
+                ON Tf.dato = billett.dato 
+                    AND billett.seteNR = Sete.seteNR 
+                    AND vogn.vognID = billett.vognID 
+                    AND billett.delstrekningID = ds.delstrekningID
+    WHERE 
+        Tf.ruteID=? 
+        AND Tf.navn=? 
+        AND Tf.dato=? 
+        AND billett.billettID IS NULL
+    ORDER BY 
+        Tf.dato, 
+        Sete.seteNR, 
+        vo.vognNR ASC
     """
     allSeatsMap: dict = {}
     for row in cursor.execute(statement, (selected[0], selected[1], selected[2])):

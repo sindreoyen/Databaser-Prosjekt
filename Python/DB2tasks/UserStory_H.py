@@ -217,7 +217,7 @@ for key in sorted_orderDict.keys():
     ## The following code is mainly string formatting for presenting the tickets to the user 
 
     # Build result string
-    result = f"Ordrenmmer: {key} \n Avreisedato: {avgangsTid_dt.date()} \n Avgang: {avgangsTid_dt.time()} {startStasjon} \n Ankomst: {ankomstTid_dt.time()} {sluttStasjon}"
+    result = f"Ordrenummer: {key} \n Avreisedato: {avgangsTid_dt.date()} \n Avgang: {avgangsTid_dt.time()} {startStasjon} \n Ankomst: {ankomstTid_dt.time()} {sluttStasjon}"
 
     # Make dictionarys for presenting seats and cabins with beds to the user in correct wagon
     ticketdict = {}
