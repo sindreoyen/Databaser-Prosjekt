@@ -50,20 +50,19 @@ def orderSeat(connection: sqlite3.Connection, ids: list,
     ## Had to use f-strings to get the list of delstrekningIDs to work
     ## Finds all available seats for the chosen trainride
     statement = """
-    SELECT Sete.seteNR, VognIOppsett.vognNR, ds.delstrekningID
+    SELECT Sete.seteNR, vo.vognNR, ds.delstrekningID, Tf.dato
     FROM
     Sete LEFT OUTER NATURAL JOIN
-    Vogn LEFT OUTER NATURAL JOIN 
-    VognIOppsett LEFT OUTER NATURAL JOIN
-    VognOppsett LEFT NATURAL JOIN
-    Togrute LEFT NATURAL JOIN
-    TogruteForekomst Tf LEFT JOIN
-    Delstrekning ds
-	LEFT JOIN KundeOrdre ko ON ko.dato=Tf.dato AND ko.ruteID=Tf.ruteID
-    LEFT JOIN SetebillettIOrdre so ON so.ordreNR=ko.ordreNR
-	WHERE Tf.ruteID=? AND Tf.navn=? AND Tf.dato=? AND so.ordreNR IS NULL
-	GROUP BY sete.seteNR, VognIOppsett.vognNR, ds.delstrekningID
-    ORDER BY Tf.dato, Sete.seteNR, VognIOppsett.vognNR ASC
+    Vogn LEFT NATURAL JOIN 
+    VognIOppsett vo LEFT OUTER JOIN
+    Togrute ON vo.oppsettID = Togrute.oppsettID LEFT OUTER NATURAL JOIN
+    TogruteForekomst Tf LEFT OUTER NATURAL JOIN
+    Delstrekning ds LEFT JOIN 
+    (SELECT ko.dato, so.billettID, so.delstrekningID, so.seteNR, so.vognID FROM
+    SetebillettIOrdre so LEFT OUTER NATURAL JOIN Kundeordre ko) billett
+    ON Tf.dato = billett.dato AND billett.seteNR = Sete.seteNR AND vogn.vognID = billett.vognID AND billett.delstrekningID = ds.delstrekningID
+    WHERE Tf.ruteID=? AND Tf.navn=? AND Tf.dato=? AND billett.billettID IS NULL
+    ORDER BY Tf.dato, Sete.seteNR, vo.vognNR ASC
     """
     allSeatsMap: dict = {}
     for row in cursor.execute(statement, (selected[0], selected[1], selected[2])):
@@ -92,7 +91,7 @@ def orderSeat(connection: sqlite3.Connection, ids: list,
     while ordering.lower() == "y":
         if len(cartSeats.keys()) == 0:
             print("Det er dessverre ikke flere ledige seter på toget..")
-        print("Det er ledige seter på toget! I vognene: " + str(list(cartSeats.keys())))
+        print("Det er ledige seter på toget! I vognene: " + str(sorted(list(cartSeats.keys()))))
         # Pick cart
         cart = ""
         while cart not in cartSeats.keys():
